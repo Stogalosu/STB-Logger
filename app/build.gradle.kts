@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.google.services)
 }
 
 android {
@@ -26,8 +27,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
 //    kotlinOptions {
 //        jvmTarget = "11"
@@ -59,6 +60,9 @@ dependencies {
     //  DataStore
     implementation(libs.androidx.datastore.preferences)
 
+    // Firestore
+    implementation(libs.firebase.firestore)
+    implementation(platform(libs.firebase.bom))
 
 
     testImplementation(libs.junit)

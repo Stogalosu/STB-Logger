@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">STB Logger</string>
+    <string name="menu">Menu</string>
+    <string name="back">Back</string>
+    <string name="trips">Trips</string>
+    <string name="search_trips">Search trips...</string>
+    <string name="stop_update_failed">Stop update failed</string>
+    <string name="stop_update_failed_dialog">Couldn\'t update stop list. Check your internet connection. If you still get this error, there is a problem with the server.</string>
+    <string name="got_it">Got it!</string>
+</resources>
