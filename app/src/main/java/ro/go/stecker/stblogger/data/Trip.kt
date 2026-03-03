@@ -8,15 +8,15 @@ enum class TripType {
     Tram,
     Trolleybus,
     Bus,
-    Subway,
-    Mixed
+    Subway
 }
 
 @Entity
 data class Trip(
     @PrimaryKey(autoGenerate = false)
-    val id: Int,
-    val type: TripType,
-    val startId: Int,
-    val endId: Int,
+    val id: Int = 0,
+    val type: TripType = TripType.Undefined,
+    val lineId: String = "",
+    val startId: Int = 0,
+    val endId: Int = 0,
 )

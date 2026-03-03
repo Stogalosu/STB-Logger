@@ -12,9 +12,10 @@ enum class StopType {
 @Entity
 data class Stop(
     @PrimaryKey(autoGenerate = false)
-    val id: String = "",
+    val id: Double = 0.0,
     val name: String = "",
-    val type: StopType = StopType.Tram,
+    val description: String = "",
     val latitude: Double = 0.0,
-    val longitude: Double = 0.0
+    val longitude: Double = 0.0,
+    val type: Int = 0,
 )

@@ -6,5 +6,8 @@ import ro.go.stecker.stblogger.data.Trip
 data class UiState(
     val trips: List<Trip> = emptyList(),
     val stops: List<Stop> = emptyList(),
-    var cannotUpdateTripsDialog: Boolean = false
+    val isConnected: Boolean = true,
+    val updatedDatabase: Int = 0,
+    var cannotUpdateTripsDialog: Boolean = false,
+    var noInternetDialog: Boolean = false
 )

@@ -1,6 +1,8 @@
 package ro.go.stecker.stblogger.ui
 
 import android.content.res.Configuration
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -28,6 +30,7 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import ro.go.stecker.stblogger.R
+import ro.go.stecker.stblogger.ui.screens.discardRed
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -37,6 +40,7 @@ fun StbTopAppBar(
     canNavigateBack: Boolean,
     onNavigateBack: () -> Unit = {},
     canSearch: Boolean,
+    uiState: UiState,
     viewModel: StbViewModel,
     modifier: Modifier = Modifier
 ) {
@@ -82,13 +86,29 @@ fun StbTopAppBar(
                 )
 
                 if (canSearch) {
-                    SearchBar(
-                        state = searchBarState,
-                        inputField = inputField,
-                    )
-                    ExpandedFullScreenSearchBar(state = searchBarState, inputField = inputField) {
+                    Box(
+                        modifier = Modifier
+                            .animateContentSize()
+                            .weight(1f)
+                    ) {
+                        SearchBar(
+                            state = searchBarState,
+                            inputField = inputField,
+//                            modifier = Modifier.weight(1f)
+                        )
+                        ExpandedFullScreenSearchBar(state = searchBarState, inputField = inputField) {
 
+                        }
                     }
+                }
+
+                AnimatedVisibility(!uiState.isConnected) {
+                    Icon(
+                        painterResource(R.drawable.cloud_off_24px),
+                        tint = discardRed,
+                        contentDescription = stringResource(R.string.no_internet),
+                        modifier = Modifier.padding(horizontal = 6.dp)
+                    )
                 }
             }
         }
@@ -116,7 +136,21 @@ fun StbTopAppBar(
                     modifier = Modifier.align(Alignment.Center)
                 )
                 ExpandedFullScreenSearchBar(state = searchBarState, inputField = inputField) {
+                    /*TODO*/
+                }
+            }
 
+            if(!uiState.isConnected) {
+                ElevatedCard(
+                    shape = RoundedCornerShape(16.dp),
+                    modifier = Modifier.align(Alignment.CenterEnd)
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.cloud_off_24px),
+                        tint = discardRed,
+                        contentDescription = stringResource(R.string.no_internet),
+                        modifier = Modifier.padding(12.dp)
+                    )
                 }
             }
         }

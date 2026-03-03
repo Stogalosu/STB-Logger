@@ -3,8 +3,19 @@
     <string name="menu">Menu</string>
     <string name="back">Back</string>
     <string name="trips">Trips</string>
-    <string name="search_trips">Search trips...</string>
-    <string name="stop_update_failed">Stop update failed</string>
-    <string name="stop_update_failed_dialog">Couldn\'t update stop list. Check your internet connection. If you still get this error, there is a problem with the server.</string>
+    <string name="search_trips">Search trips…</string>
+<!--    <string name="stop_update_failed">Stop update failed</string>-->
+<!--    <string name="stop_update_failed_dialog">Couldn\'t update stop list. Check your internet connection. If you still get this error, there is a problem with the server.</string>-->
+
+<!--    <string name="failed_to_find_line">Failed to find line</string>-->
+<!--    <string name="failed_to_find_line_dialog">Failed to find line with id %1$s! Either the line doesn\'t exist or your database isn\'t up to date!</string>-->
+<!--    <string name="update_line_database">Update database</string>-->
+<!--    <string name="i_know_what_im_doing">I know what I\'m doing!</string>-->
     <string name="got_it">Got it!</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="no_internet">No internet connection!</string>
+    <string name="no_internet_dialog">You don\'t have a working internet connection! You won\'t be able to refresh lines and stops! You can monitor your connection by looking at the icon in the top-right corner.</string>
+    <string name="update_stop_data">Update stop database</string>
+    <string name="update_stop_data_dialog">Couldn\'t find a stop! Either the stop doesn\'t exist (which doesn\'t happen) or the stop database stored on your device is outdated. Updating will take a few seconds.</string>
+    <string name="update">Update</string>
 </resources>

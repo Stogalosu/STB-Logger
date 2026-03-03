@@ -11,7 +11,8 @@ object AppViewModelProvider {
         initializer {
             StbViewModel(
                 databaseRepository = stbLoggerApplication().container.databaseRepository,
-                cloudRepository = stbLoggerApplication().container.cloudRepository
+                cloudRepository = stbLoggerApplication().container.cloudRepository,
+                connectivityObserver = stbLoggerApplication().container.connectivityObserver
             )
         }
     }
