@@ -18,4 +18,9 @@
     <string name="update_stop_data">Update stop database</string>
     <string name="update_stop_data_dialog">Couldn\'t find a stop! Either the stop doesn\'t exist (which doesn\'t happen) or the stop database stored on your device is outdated. Updating will take a few seconds.</string>
     <string name="update">Update</string>
+    <string name="more_info">More info</string>
+    <string name="delete_trip">Delete trip</string>
+    <string name="delete_trip_dialog">Are you sure you want to delete trip no %1$s with line %2$s, taken on %3$s?</string>
+    <string name="delete">Delete</string>
+    <string name="cancel">Cancel</string>
 </resources>

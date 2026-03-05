@@ -4,8 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ro.go.stecker.stblogger.data.CloudRepository
@@ -14,6 +16,7 @@ import ro.go.stecker.stblogger.data.Stop
 import ro.go.stecker.stblogger.data.Trip
 import ro.go.stecker.stblogger.data.TripType
 import ro.go.stecker.stblogger.data.database.DatabaseRepository
+import ro.go.stecker.stblogger.data.lineType
 import ro.go.stecker.stblogger.network.NetworkConnectivityObserver
 
 class StbViewModel(
@@ -23,32 +26,31 @@ class StbViewModel(
 ): ViewModel() {
 
     private val _uiState = MutableStateFlow(UiState())
-    val uiState: StateFlow<UiState> = _uiState.asStateFlow()
+    val uiState: StateFlow<UiState> =
+        combine(
+            databaseRepository.getTrips(),
+            connectivityObserver.isConnected,
+            _uiState
+        ) { tripList, isConnected, _uiState ->
+            _uiState.copy(trips = tripList, isConnected = isConnected)
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(),
+            initialValue = UiState()
+        )
 
     init {
         viewModelScope.launch {
-//            combine(
-//                 connectivityObserver.observe()
-//            ) { networkStatus ->
-//                UiState(
-//                    networkStatus = networkStatus
-//                )
-//            }.collect { value -> _uiState.value = value }
-
-            val trips = listOf(
+            val trip =
                 Trip(
-                    id = 1,
-                    type = TripType.Tram,
+                    type = TripType.Bus,
                     lineId = "146",
                     startId = 6021,
-                    endId = 7046
+                    endId = 7046,
+                    date = "2026-02-04"
                 )
-            )
 
-            connectivityObserver.isConnected.collect { value ->
-                _uiState.value = UiState(trips = trips, isConnected = value)
-            }
-
+            databaseRepository.insertTrip(trip)
         }
     }
 
@@ -66,6 +68,7 @@ class StbViewModel(
     fun updateLineDatabase() {
         if(_uiState.value.isConnected)
             cloudRepository.getLineDatabase { list ->
+                list.forEach { it.type = lineType(it.name) }
                 viewModelScope.launch {
                     databaseRepository.insertLineList(
                         lineList = list
@@ -91,5 +94,7 @@ class StbViewModel(
                 }
             }
     }
+
+    suspend fun deleteTrip(id: Int) = databaseRepository.deleteTrip(id)
 
 }

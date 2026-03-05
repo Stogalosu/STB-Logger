@@ -1,13 +1,20 @@
 package ro.go.stecker.stblogger.data
 
+import androidx.annotation.DrawableRes
+import androidx.compose.ui.graphics.Color
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import ro.go.stecker.stblogger.R
 
-enum class LineType {
+enum class LineType(
+    @param:DrawableRes
+    val icon: Int = R.drawable.block_24px,
+    val color: Color = Color(0, 0, 0)
+) {
     Undefined,
-    Tram,
-    Trolleybus,
-    Bus,
+    Tram(icon = R.drawable.tram, color = Color(218, 11, 53)),
+    Trolleybus(icon = R.drawable.trolleybus, color = Color(87, 201, 90)),
+    Bus(icon = R.drawable.bus, color = Color(10, 92, 255)),
     Subway
 }
 
@@ -16,7 +23,7 @@ data class Line(
     @PrimaryKey(autoGenerate = false)
     val id: String = "",
     val name: String = "",
-    val type: LineType = lineType(name)
+    var type: LineType = lineType(name)
 )
 
 fun lineType(name: String): LineType {
