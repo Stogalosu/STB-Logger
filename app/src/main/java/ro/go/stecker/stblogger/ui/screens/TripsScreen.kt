@@ -61,6 +61,7 @@ var tripToDeleteLine by mutableStateOf(Line())
 @Composable
 fun TripsScreen(
     showUpdateStopDataDialog: () -> Unit,
+    onInfoClick: (Int) -> Unit,
     viewModel: StbViewModel,
     uiState: UiState
 ) {
@@ -112,8 +113,7 @@ fun TripsScreen(
             StbTopAppBar(
                 canNavigateBack = false,
                 canSearch = true,
-                uiState = uiState,
-                viewModel = viewModel
+                uiState = uiState
             )
         },
         modifier = Modifier.fillMaxSize()
@@ -124,7 +124,13 @@ fun TripsScreen(
                 .padding(20.dp)
         ) {
             items(items = uiState.trips, key = { it.id }) { trip ->
-                TripCard(trip, showUpdateStopDataDialog, uiState, viewModel)
+                TripCard(
+                    trip = trip,
+                    showUpdateStopDataDialog = showUpdateStopDataDialog,
+                    onInfoClick = onInfoClick,
+                    uiState = uiState,
+                    viewModel = viewModel
+                )
             }
         }
     }
@@ -134,6 +140,7 @@ fun TripsScreen(
 fun TripCard(
     trip: Trip,
     showUpdateStopDataDialog: () -> Unit,
+    onInfoClick: (Int) -> Unit,
     uiState: UiState,
     viewModel: StbViewModel
 ) {
@@ -230,9 +237,7 @@ fun TripCard(
 
                 Column {
                     IconButton(
-                        onClick = {
-
-                        }
+                        onClick = { onInfoClick(trip.id) }
                     ) {
                         Icon(
                             painter = painterResource(R.drawable.info_24px),

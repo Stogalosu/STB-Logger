@@ -1,5 +1,9 @@
 package ro.go.stecker.stblogger.ui.navigation
 
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -11,18 +15,22 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.dialog
+import androidx.navigation.navArgument
 import kotlinx.coroutines.flow.distinctUntilChanged
 import ro.go.stecker.stblogger.ui.AppViewModelProvider
 import ro.go.stecker.stblogger.ui.StbViewModel
 import ro.go.stecker.stblogger.ui.dialogs.NoInternetDialog
 import ro.go.stecker.stblogger.ui.dialogs.UpdateStopDatabaseDialog
+import ro.go.stecker.stblogger.ui.screens.TripInfoScreen
 import ro.go.stecker.stblogger.ui.screens.TripsScreen
 
 enum class StbScreen {
     TripsScreen,
+    TripInfoScreen,
     UpdateStopDatabaseDialog,
     NoInternetDialog
 }
@@ -53,7 +61,28 @@ fun StbNavHost(
 
     NavHost(
         navController = navController,
-        startDestination = StbScreen.TripsScreen.name
+        startDestination = StbScreen.TripsScreen.name,
+        enterTransition = { slideInVertically(initialOffsetY = { it / 2 }) },
+        exitTransition = {
+            slideOutVertically(
+                targetOffsetY = { -80 },
+                animationSpec = tween()
+            )
+        },
+        popEnterTransition = {
+            slideInVertically(
+                initialOffsetY = { -80 },
+                animationSpec = tween(durationMillis = 150)
+            )
+        },
+        popExitTransition = {
+            slideOutVertically(targetOffsetY = { it / 2 }) + fadeOut(
+                tween(
+                    durationMillis = 200,
+                    delayMillis = 100
+                )
+            )
+        }
     ) {
         composable(
             route = StbScreen.TripsScreen.name
@@ -61,6 +90,20 @@ fun StbNavHost(
             TripsScreen(
                 viewModel = viewModel,
                 showUpdateStopDataDialog = { navController.navigate(StbScreen.UpdateStopDatabaseDialog.name) },
+                onInfoClick = { navController.navigate(StbScreen.TripInfoScreen.name + "/" + it) },
+                uiState = uiState
+            )
+        }
+
+        composable(
+            route = StbScreen.TripInfoScreen.name + "/{tripId}",
+            arguments = listOf(navArgument("tripId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val tripId = backStackEntry.arguments?.getInt("tripId") ?: 0
+
+            TripInfoScreen(
+                trip = uiState.trips.first { it.id == tripId },
+                onNavigateBack = { navController.popBackStack() },
                 uiState = uiState
             )
         }

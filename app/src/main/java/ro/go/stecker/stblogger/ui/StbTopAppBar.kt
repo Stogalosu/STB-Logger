@@ -41,7 +41,6 @@ fun StbTopAppBar(
     onNavigateBack: () -> Unit = {},
     canSearch: Boolean,
     uiState: UiState,
-    viewModel: StbViewModel,
     modifier: Modifier = Modifier
 ) {
 
