@@ -4,11 +4,12 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import ro.go.stecker.stblogger.data.Line
-import ro.go.stecker.stblogger.data.Stop
-import ro.go.stecker.stblogger.data.Trip
+import ro.go.stecker.stblogger.data.database.entities.Line
+import ro.go.stecker.stblogger.data.database.entities.Path
+import ro.go.stecker.stblogger.data.database.entities.Stop
+import ro.go.stecker.stblogger.data.database.entities.Trip
 
-@Database(entities = [Stop::class, Line::class, Trip::class], version = 1, exportSchema = false)
+@Database(entities = [Stop::class, Line::class, Trip::class, Path::class], version = 1, exportSchema = false)
 abstract class StbLoggerDatabase: RoomDatabase() {
     abstract fun stbDao(): StbDao
 

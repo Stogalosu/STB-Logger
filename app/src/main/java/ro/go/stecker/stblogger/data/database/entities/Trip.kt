@@ -1,4 +1,4 @@
-package ro.go.stecker.stblogger.data
+package ro.go.stecker.stblogger.data.database.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

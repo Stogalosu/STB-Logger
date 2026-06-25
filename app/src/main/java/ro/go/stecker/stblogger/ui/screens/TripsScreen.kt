@@ -26,7 +26,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -41,10 +40,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
 import ro.go.stecker.stblogger.R
-import ro.go.stecker.stblogger.data.Line
-import ro.go.stecker.stblogger.data.Stop
-import ro.go.stecker.stblogger.data.Trip
-import ro.go.stecker.stblogger.data.getFormattedDate
+import ro.go.stecker.stblogger.data.database.entities.Line
+import ro.go.stecker.stblogger.data.database.entities.Stop
+import ro.go.stecker.stblogger.data.database.entities.Trip
+import ro.go.stecker.stblogger.data.database.entities.getFormattedDate
 import ro.go.stecker.stblogger.ui.StbTopAppBar
 import ro.go.stecker.stblogger.ui.StbViewModel
 import ro.go.stecker.stblogger.ui.UiState
@@ -60,27 +59,12 @@ var tripToDeleteLine by mutableStateOf(Line())
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TripsScreen(
-    showUpdateStopDataDialog: () -> Unit,
     onInfoClick: (Int) -> Unit,
     viewModel: StbViewModel,
     uiState: UiState
 ) {
 
     val coroutineScope = rememberCoroutineScope()
-
-//    if(uiState.cannotUpdateTripsDialog) {
-//        AlertDialog(
-//            onDismissRequest = { uiState.cannotUpdateTripsDialog = false },
-//            icon = { },
-//            title = { Text(text = stringResource(R.string.stop_update_failed)) },
-//            text = { Text(text = stringResource(R.string.stop_update_failed_dialog)) },
-//            confirmButton = {
-//                TextButton(onClick = { uiState.cannotUpdateTripsDialog = false }) {
-//                    Text(text = stringResource(R.string.got_it))
-//                }
-//            }
-//        )
-//    }
 
     if(deleteTripDialog) {
         AlertDialog(
@@ -126,7 +110,6 @@ fun TripsScreen(
             items(items = uiState.trips, key = { it.id }) { trip ->
                 TripCard(
                     trip = trip,
-                    showUpdateStopDataDialog = showUpdateStopDataDialog,
                     onInfoClick = onInfoClick,
                     uiState = uiState,
                     viewModel = viewModel
@@ -139,24 +122,19 @@ fun TripsScreen(
 @Composable
 fun TripCard(
     trip: Trip,
-    showUpdateStopDataDialog: () -> Unit,
     onInfoClick: (Int) -> Unit,
     uiState: UiState,
     viewModel: StbViewModel
 ) {
     var line by remember { mutableStateOf(Line()) }
-    val stops = remember { mutableStateListOf(Stop(), Stop()) }
-    var showedStopDialog by remember { mutableStateOf(false) }
 
-    LaunchedEffect(uiState.updatedDatabase) {
+    var startStop by remember { mutableStateOf(Stop()) }
+    var endStop by remember { mutableStateOf(Stop()) }
+
+    LaunchedEffect(uiState.databaseUpdateStatus, Unit) {
         line = viewModel.getLineById(trip.lineId)
-        stops[0] = viewModel.getStopById(trip.startId)
-        stops[1] = viewModel.getStopById(trip.endId)
-        if(!showedStopDialog) {
-            showedStopDialog = true
-            if(stops[0] == Stop() || stops[1] == Stop())
-                showUpdateStopDataDialog()
-        }
+        startStop = viewModel.getStopById(trip.startId)
+        endStop = viewModel.getStopById(trip.endId)
     }
 
     Card(
@@ -169,10 +147,8 @@ fun TripCard(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth()
         ) {
-//            Image(
-//                painter = painterResource(R.drawable.ic_launcher_background),
-//                contentDescription = "Temporary replacement",
-//                modifier = Modifier.size(160.dp)
+//            GlideImage(
+//                contentDescription = null
 //            )
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -183,7 +159,7 @@ fun TripCard(
                     verticalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
                     Text(
-                        text = stops[0].name,
+                        text = startStop.name,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -227,7 +203,7 @@ fun TripCard(
 
 
                     Text(
-                        text = stops[1].name,
+                        text = endStop.name,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold
                     )

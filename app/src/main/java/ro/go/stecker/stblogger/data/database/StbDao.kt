@@ -5,9 +5,10 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
-import ro.go.stecker.stblogger.data.Line
-import ro.go.stecker.stblogger.data.Stop
-import ro.go.stecker.stblogger.data.Trip
+import ro.go.stecker.stblogger.data.database.entities.Line
+import ro.go.stecker.stblogger.data.database.entities.Path
+import ro.go.stecker.stblogger.data.database.entities.Stop
+import ro.go.stecker.stblogger.data.database.entities.Trip
 
 @Dao
 interface StbDao {
@@ -17,8 +18,17 @@ interface StbDao {
     @Insert(entity = Line::class, onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertLineList(lineList: List<Line>)
 
+    @Insert(entity = Path::class, onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertPathList(pathList: List<Path>)
+
     @Query("SELECT * FROM line WHERE id = :id LIMIT 1")
     suspend fun getLineById(id: String): Line?
+
+    @Query("SELECT * FROM line")
+    suspend fun getLines(): List<Line>
+
+    @Query("SELECT * FROM stop")
+    suspend fun getStops(): List<Stop>
 
     @Query("SELECT * FROM stop WHERE id = :id LIMIT 1")
     suspend fun getStopById(id: Int): Stop?
@@ -31,5 +41,8 @@ interface StbDao {
 
     @Query("DELETE FROM trip WHERE id = :id")
     suspend fun deleteTrip(id: Int)
+
+    @Query("SELECT * FROM path")
+    suspend fun getPaths(): List<Path>
 
 }

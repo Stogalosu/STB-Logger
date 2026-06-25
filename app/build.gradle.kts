@@ -1,7 +1,5 @@
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
     alias(libs.plugins.google.services)
 }
@@ -27,8 +25,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_25
-        targetCompatibility = JavaVersion.VERSION_25
+        sourceCompatibility = JavaVersion.VERSION_24
+        targetCompatibility = JavaVersion.VERSION_24
     }
 //    kotlinOptions {
 //        jvmTarget = "11"
@@ -59,9 +57,13 @@ dependencies {
     //  DataStore
     implementation(libs.androidx.datastore.preferences)
 
-    // Firestore
+    // Firebase
     implementation(libs.firebase.firestore)
+    implementation(libs.firebase.functions)
     implementation(platform(libs.firebase.bom))
+
+    //Glide
+    implementation(libs.glide)
 
 
     testImplementation(libs.junit)

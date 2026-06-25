@@ -23,15 +23,16 @@ import androidx.navigation.navArgument
 import kotlinx.coroutines.flow.distinctUntilChanged
 import ro.go.stecker.stblogger.ui.AppViewModelProvider
 import ro.go.stecker.stblogger.ui.StbViewModel
+import ro.go.stecker.stblogger.ui.UpdateStatus
 import ro.go.stecker.stblogger.ui.dialogs.NoInternetDialog
-import ro.go.stecker.stblogger.ui.dialogs.UpdateStopDatabaseDialog
+import ro.go.stecker.stblogger.ui.dialogs.UpdateDatabaseDialog
 import ro.go.stecker.stblogger.ui.screens.TripInfoScreen
 import ro.go.stecker.stblogger.ui.screens.TripsScreen
 
 enum class StbScreen {
     TripsScreen,
     TripInfoScreen,
-    UpdateStopDatabaseDialog,
+    UpdateDatabasesDialog,
     NoInternetDialog
 }
 
@@ -57,6 +58,12 @@ fun StbNavHost(
                 else if(value && !previousConnected)
                     previousConnected = true
             }
+    }
+
+    LaunchedEffect(uiState.databaseUpdateStatus) {
+        if(uiState.databaseUpdateStatus == UpdateStatus.Updating) {
+            navController.navigate(StbScreen.UpdateDatabasesDialog.name)
+        }
     }
 
     NavHost(
@@ -89,7 +96,6 @@ fun StbNavHost(
         ) {
             TripsScreen(
                 viewModel = viewModel,
-                showUpdateStopDataDialog = { navController.navigate(StbScreen.UpdateStopDatabaseDialog.name) },
                 onInfoClick = { navController.navigate(StbScreen.TripInfoScreen.name + "/" + it) },
                 uiState = uiState
             )
@@ -108,12 +114,10 @@ fun StbNavHost(
             )
         }
 
-        dialog(route = StbScreen.UpdateStopDatabaseDialog.name) {
-            UpdateStopDatabaseDialog(
-                onDismissRequest = { navController.popBackStack() },
-                updateDatabase = { onFinish -> viewModel.updateStopDatabase { onFinish() } },
-                onNoInternet = { navController.navigate(StbScreen.NoInternetDialog.name) },
-                uiState = uiState
+        dialog(route = StbScreen.UpdateDatabasesDialog.name) {
+            UpdateDatabaseDialog(
+                onDismiss = { navController.popBackStack() },
+                viewModel = viewModel
             )
         }
 
