@@ -2,11 +2,13 @@ package ro.go.stecker.stblogger.ui.screens
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -17,6 +19,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -33,6 +36,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -60,10 +65,12 @@ var tripToDeleteLine by mutableStateOf(Line())
 @Composable
 fun TripsScreen(
     onInfoClick: (Int) -> Unit,
+    onNewTripClick: () -> Unit,
     viewModel: StbViewModel,
     uiState: UiState
 ) {
 
+    var fabHeight by remember { mutableStateOf(0.dp) }
     val coroutineScope = rememberCoroutineScope()
 
     if(deleteTripDialog) {
@@ -100,20 +107,45 @@ fun TripsScreen(
                 uiState = uiState
             )
         },
+        floatingActionButton = {
+            val current = LocalDensity.current
+            ExtendedFloatingActionButton(
+                text = { Text(stringResource(R.string.new_trip)) },
+                icon = {
+                    Icon(
+                        painter = painterResource(R.drawable.add_24px),
+                        contentDescription = stringResource(R.string.new_trip)
+                    )
+                },
+                onClick = onNewTripClick,
+                modifier = Modifier
+//                    .padding(16.dp)
+                    .onGloballyPositioned { coordinates ->
+                        fabHeight = with(current) { coordinates.size.height.toDp() }
+                    }
+            )
+        },
         modifier = Modifier.fillMaxSize()
     ) { innerPadding ->
         LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(12.dp),
             modifier = Modifier
                 .padding(innerPadding)
-                .padding(20.dp)
+                .padding(horizontal = 20.dp)
+                .fillMaxSize()
         ) {
             items(items = uiState.trips, key = { it.id }) { trip ->
-                TripCard(
-                    trip = trip,
-                    onInfoClick = onInfoClick,
-                    uiState = uiState,
-                    viewModel = viewModel
-                )
+                Box(modifier = Modifier.animateItem()) {
+                    TripCard(
+                        trip = trip,
+                        onInfoClick = onInfoClick,
+                        uiState = uiState,
+                        viewModel = viewModel
+                    )
+                }
+            }
+            item {
+                Spacer(modifier = Modifier.height(fabHeight + 20.dp))
             }
         }
     }
@@ -140,7 +172,7 @@ fun TripCard(
     Card(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
         shape = RoundedCornerShape(16.dp),
-        border = BorderStroke(0.5.dp, line.type.color),
+        border = BorderStroke(1.5.dp, line.type.color),
         modifier = Modifier.fillMaxWidth()
     ) {
         Row(

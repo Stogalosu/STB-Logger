@@ -13,7 +13,6 @@ import ro.go.stecker.stblogger.data.firebase.firestore.CloudRepository
 import ro.go.stecker.stblogger.data.database.entities.Line
 import ro.go.stecker.stblogger.data.database.entities.Stop
 import ro.go.stecker.stblogger.data.database.entities.Trip
-import ro.go.stecker.stblogger.data.database.entities.TripType
 import ro.go.stecker.stblogger.data.database.DatabaseRepository
 import ro.go.stecker.stblogger.data.database.entities.Path
 import ro.go.stecker.stblogger.data.firebase.functions.FunctionsRepository
@@ -69,16 +68,16 @@ class StbViewModel(
             if(updates.contains(true))
                 _uiState.update { it.copy(databaseUpdateStatus = UpdateStatus.Updating) }
 
-            val trip =
-                Trip(
-                    type = TripType.Bus,
-                    lineId = "887",
-                    startId = 6626,
-                    endId = 6044,
-                    date = "2026-02-04"
-                )
-
-            databaseRepository.insertTrip(trip)
+//            val trip =
+//                Trip(
+//                    type = TripType.Bus,
+//                    lineId = "887",
+//                    startId = 6626,
+//                    endId = 6044,
+//                    date = "2026-02-04"
+//                )
+//
+//            databaseRepository.insertTrip(trip)
         }
     }
 
@@ -116,6 +115,8 @@ class StbViewModel(
 
     suspend fun getStops(): List<Stop> = databaseRepository.getStops()
 
+    suspend fun getStopsOnLine(line: String): List<Pair<Stop, Int>> = databaseRepository.getStopsOnLine(line)
+
     suspend fun updateStopDatabase() {
         if(_uiState.value.isConnected) {
             val shouldUpdate = updates[2]
@@ -145,6 +146,8 @@ class StbViewModel(
             }
         }
     }
+
+    suspend fun insertTrip(trip: Trip) = databaseRepository.insertTrip(trip)
 
     suspend fun deleteTrip(id: Int) = databaseRepository.deleteTrip(id)
 

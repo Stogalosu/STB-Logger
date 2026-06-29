@@ -6,6 +6,7 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -27,6 +28,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import ro.go.stecker.stblogger.R
@@ -37,6 +39,7 @@ import ro.go.stecker.stblogger.ui.screens.discardRed
 @Composable
 fun StbTopAppBar(
 //    currentScreen: StbScreen,
+    title: String = "",
     canNavigateBack: Boolean,
     onNavigateBack: () -> Unit = {},
     canSearch: Boolean,
@@ -99,6 +102,13 @@ fun StbTopAppBar(
 
                         }
                     }
+                } else {
+                    Spacer(modifier = Modifier.weight(1f))
+                    Text(
+                        text = title,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Spacer(modifier = Modifier.weight(1f))
                 }
 
                 AnimatedVisibility(!uiState.isConnected) {

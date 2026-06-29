@@ -15,7 +15,7 @@ enum class TripType {
 
 @Entity
 data class Trip(
-    @PrimaryKey(autoGenerate = false)
+    @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     val type: TripType = TripType.Undefined,
     val lineId: String = "",
@@ -28,4 +28,16 @@ data class Trip(
 fun Trip.getFormattedDate(): String  {
     val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
     return LocalDate.parse(this.date).format(formatter)
+}
+
+fun getTripType(line: String): TripType {
+    if(line.toIntOrNull() != null) {
+        val lineInt = line.toInt()
+        if(lineInt < 60) return TripType.Tram
+        if(lineInt < 100) return TripType.Trolleybus
+        return TripType.Bus
+    } else {
+        if(line[0] == 'M') return TripType.Subway
+        return TripType.Bus
+    }
 }

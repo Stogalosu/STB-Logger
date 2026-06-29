@@ -33,6 +33,9 @@ interface StbDao {
     @Query("SELECT * FROM stop WHERE id = :id LIMIT 1")
     suspend fun getStopById(id: Int): Stop?
 
+    @Query("SELECT * FROM path WHERE line = :line")
+    suspend fun getPathsOnLine(line: String): List<Path>
+
     @Query("SELECT * FROM trip")
     fun getTrips(): Flow<List<Trip>>
 

@@ -29,4 +29,12 @@
     <string name="line_update_complete">Line update complete</string>
     <string name="updating_stops">Updating stops…</string>
     <string name="stop_update_complete">Stop update complete</string>
+    <string name="new_trip">New trip</string>
+    <string name="choose_line">Choose the line:</string>
+    <string name="line">Line</string>
+    <string name="choose_start_stop">Choose start stop:</string>
+    <string name="start_stop">Start stop</string>
+    <string name="choose_end_stop">Choose end stop:</string>
+    <string name="end_stop">End stop</string>
+    <string name="done">Done!</string>
 </resources>
