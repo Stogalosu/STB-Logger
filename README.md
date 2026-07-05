@@ -17,7 +17,7 @@ You can find LineJSONFormatter [here](https://github.com/Stogalosu/LineJsonForma
 Download the apk from the releases page and install it on your Android device. Android 11 or newer is required. "Install from unknown sources" must be allowed. This is normal for sideloading.
 
 ## Usage
-For now, only the trip logging is implemented. You can log a new trip by manually selecting the line, the stop you got on at and the one you got off at. Then, you can click the info button to see which stops you passed by and a bigger map of your trip.
+For now, only the trip logging for lines 1-85 is implemented. You can log a new trip by manually selecting the line, the stop you got on at and the one you got off at. Then, you can click the info button to see which stops you passed by and a bigger map of your trip.
 
 ## Future plans
 The app is nowhere close to being finished. I want to also add a page where you can see the buses' location in real time, using STB's public API. You will also be able to log a trip automatically using GPS location and see the stats for all your trips, as well as for individual ones. I'm thinking of adding mixed trips, that is ones in which you take multiple buses to get to you destination, but I'm not sure how to do that.
