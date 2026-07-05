@@ -11,6 +11,8 @@ While developing this, I had to create some helper tools for repetitive tasks:
 - LineJSONFormatter - a standalone console project that helps me format the data and makes it easier to import into Mapbox, which generates the map images.
 - database-update-checker - another Firebase function that is basically an API. It is used by the app to know if there are any new changes in the databases. The client sends the timestamp of the last update and the function checks if the latest update timestamp is newer or not. I went through a couple other ideas before reaching the final code.
 
+You can find LineJSONFormatter [here](https://github.com/Stogalosu/LineJsonFormatter) and the rest in the tools folder.
+
 ## Installation
 Download the apk from the releases page and install it on your Android device. Android 11 or newer is required. "Install from unknown sources" must be allowed. This is normal for sideloading.
 
