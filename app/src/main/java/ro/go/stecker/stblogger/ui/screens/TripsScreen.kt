@@ -43,12 +43,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
 import kotlinx.coroutines.launch
 import ro.go.stecker.stblogger.R
 import ro.go.stecker.stblogger.data.database.entities.Line
 import ro.go.stecker.stblogger.data.database.entities.Stop
 import ro.go.stecker.stblogger.data.database.entities.Trip
 import ro.go.stecker.stblogger.data.database.entities.getFormattedDate
+import ro.go.stecker.stblogger.data.mapUrlGen
 import ro.go.stecker.stblogger.ui.StbTopAppBar
 import ro.go.stecker.stblogger.ui.StbViewModel
 import ro.go.stecker.stblogger.ui.UiState
@@ -127,30 +130,45 @@ fun TripsScreen(
         },
         modifier = Modifier.fillMaxSize()
     ) { innerPadding ->
-        LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-            modifier = Modifier
-                .padding(innerPadding)
-                .padding(horizontal = 20.dp)
-                .fillMaxSize()
-        ) {
-            items(items = uiState.trips, key = { it.id }) { trip ->
-                Box(modifier = Modifier.animateItem()) {
-                    TripCard(
-                        trip = trip,
-                        onInfoClick = onInfoClick,
-                        uiState = uiState,
-                        viewModel = viewModel
-                    )
+        if (uiState.trips.isNotEmpty()) {
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .padding(horizontal = 20.dp)
+                    .fillMaxSize()
+            ) {
+                items(items = uiState.trips, key = { it.id }) { trip ->
+                    Box(modifier = Modifier.animateItem()) {
+                        TripCard(
+                            trip = trip,
+                            onInfoClick = onInfoClick,
+                            uiState = uiState,
+                            viewModel = viewModel
+                        )
+                    }
+                }
+                item {
+                    Spacer(modifier = Modifier.height(fabHeight + 20.dp))
                 }
             }
-            item {
-                Spacer(modifier = Modifier.height(fabHeight + 20.dp))
+        } else {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.fillMaxSize()
+            ) {
+                Spacer(modifier = Modifier.weight(1f))
+                Text(
+                    text = stringResource(R.string.no_trips),
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(modifier = Modifier.weight(1f))
             }
         }
     }
 }
 
+@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun TripCard(
     trip: Trip,
@@ -162,8 +180,10 @@ fun TripCard(
 
     var startStop by remember { mutableStateOf(Stop()) }
     var endStop by remember { mutableStateOf(Stop()) }
+    var url by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(uiState.databaseUpdateStatus, Unit) {
+        url = mapUrlGen(trip, 1f, viewModel)
         line = viewModel.getLineById(trip.lineId)
         startStop = viewModel.getStopById(trip.startId)
         endStop = viewModel.getStopById(trip.endId)
@@ -179,9 +199,11 @@ fun TripCard(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth()
         ) {
-//            GlideImage(
-//                contentDescription = null
-//            )
+            if(url != null)
+                GlideImage(
+                    model = url,
+                    contentDescription = null
+                )
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.padding(16.dp)

@@ -37,4 +37,7 @@
     <string name="choose_end_stop">Choose end stop:</string>
     <string name="end_stop">End stop</string>
     <string name="done">Done!</string>
+    <string name="no_trips">You have no trips!</string>
+    <string name="trip_with">Trip with %1$s</string>
+    <string name="intermediary_stops">Intermediary stops:</string>
 </resources>

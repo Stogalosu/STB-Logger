@@ -21,7 +21,9 @@ data class Trip(
     val lineId: String = "",
     val vehicle: Int = 0,
     val startId: Int = 0,
+    val startDir: Int = 0,
     val endId: Int = 0,
+    val endDir: Int = 0,
     val date: String = "1970-01-01"
 )
 

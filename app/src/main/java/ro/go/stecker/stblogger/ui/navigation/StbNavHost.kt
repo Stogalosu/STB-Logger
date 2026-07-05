@@ -113,7 +113,8 @@ fun StbNavHost(
             TripInfoScreen(
                 trip = uiState.trips.first { it.id == tripId },
                 onNavigateBack = { navController.popBackStack() },
-                uiState = uiState
+                uiState = uiState,
+                viewModel = viewModel
             )
         }
 

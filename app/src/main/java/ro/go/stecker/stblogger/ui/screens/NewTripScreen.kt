@@ -57,9 +57,9 @@ fun NewTripScreen(
     var isLineChosen by remember { mutableStateOf(false) }
 
     val startStopTextState = rememberTextFieldState("")
-    var startId = 0
+    var startStop = Pair(0, 0)
     val endStopTextState = rememberTextFieldState("")
-    var endId = 0
+    var endStop = Pair(0, 0)
 
     var lines = listOf<Line>()
     var lineOptions by remember { mutableStateOf(listOf<String>()) }
@@ -131,7 +131,10 @@ fun NewTripScreen(
                             label = stringResource(R.string.start_stop),
                             options = stopOptions,
                             onOptionChange = { index, stop ->
-                                startId = stopsWithDir[index].first.id.toInt()
+                                startStop = Pair(
+                                    stopsWithDir[index].first.id.toInt(),
+                                    stopsWithDir[index].second
+                                )
                                 stopOptionsShort = stopOptions.subList(index+1, stopOptions.lastIndex)
                                 endStopTextState.setTextAndPlaceCursorAtEnd("")
                             }
@@ -147,7 +150,10 @@ fun NewTripScreen(
                             options = stopOptionsShort,
                             onOptionChange = { index, stop ->
                                 val goodIndex = stopOptions.indexOf(stop)
-                                endId = stopsWithDir[goodIndex].first.id.toInt()
+                                endStop = Pair(
+                                    stopsWithDir[goodIndex].first.id.toInt(),
+                                    stopsWithDir[goodIndex].second
+                                )
                             }
                         )
                     }
@@ -164,8 +170,10 @@ fun NewTripScreen(
                         val trip = Trip(
                             type = getTripType(line),
                             lineId = lines.find { it.name == line }!!.id,
-                            startId = startId,
-                            endId = endId,
+                            startId = startStop.first,
+                            startDir = startStop.second,
+                            endId = endStop.first,
+                            endDir = endStop.second,
                             date = currentDate
                         )
                         viewModel.insertTrip(trip)
