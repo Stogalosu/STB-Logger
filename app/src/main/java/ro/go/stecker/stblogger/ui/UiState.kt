@@ -10,8 +10,10 @@ enum class UpdateStatus {
 
 data class UiState(
     val trips: List<Trip> = emptyList(),
+    val filteredTrips: List<Trip> = emptyList(),
     val isConnected: Boolean = true,
     val databaseUpdateStatus: UpdateStatus = UpdateStatus.NotUpdated,
-    var cannotUpdateTripsDialog: Boolean = false,
-    var noInternetDialog: Boolean = false
+    val cannotUpdateTripsDialog: Boolean = false,
+    val noInternetDialog: Boolean = false,
+    val showFilteredTrips: Boolean = false
 )

@@ -61,7 +61,8 @@ fun TripInfoScreen(
                 canNavigateBack = true,
                 onNavigateBack = onNavigateBack,
                 canSearch = false,
-                uiState = uiState
+                uiState = uiState,
+                viewModel = viewModel
             )
         },
         modifier = Modifier.fillMaxSize()

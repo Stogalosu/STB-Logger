@@ -116,6 +116,7 @@ class StbViewModel(
     suspend fun getStops(): List<Stop> = databaseRepository.getStops()
 
     suspend fun getStopsOnLine(line: String): List<Pair<Stop, Int>> = databaseRepository.getStopsOnLine(line)
+    suspend fun searchStops(query: String): List<String> = databaseRepository.searchStops(query)
 
     suspend fun updateStopDatabase() {
         if(_uiState.value.isConnected) {
@@ -148,6 +149,20 @@ class StbViewModel(
     }
 
     suspend fun insertTrip(trip: Trip) = databaseRepository.insertTrip(trip)
+
+    suspend fun searchTrips(
+        startStopName: String = "%",
+        endStopName: String = "%",
+        lineName: String = "%",
+        date: String = "%"
+    ) = databaseRepository.searchTrips(startStopName, endStopName, lineName, date)
+
+    fun showFilteredTrips(active: Boolean, filteredTrips: List<Trip> = listOf()) {
+        if(filteredTrips.isNotEmpty())
+            _uiState.update { it.copy(showFilteredTrips = active, filteredTrips = filteredTrips) }
+        else
+            _uiState.update { it.copy(showFilteredTrips = active) }
+    }
 
     suspend fun deleteTrip(id: Int) = databaseRepository.deleteTrip(id)
 

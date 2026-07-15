@@ -24,6 +24,9 @@ interface StbDao {
     @Query("SELECT * FROM line WHERE id = :id LIMIT 1")
     suspend fun getLineById(id: String): Line?
 
+    @Query("SELECT * FROM line WHERE name = :name LIMIT 1")
+    suspend fun getLineByName(name: String): Line?
+
     @Query("SELECT * FROM line")
     suspend fun getLines(): List<Line>
 
@@ -33,6 +36,12 @@ interface StbDao {
     @Query("SELECT * FROM stop WHERE id = :id LIMIT 1")
     suspend fun getStopById(id: Int): Stop?
 
+    @Query("SELECT * FROM stop WHERE name = :name")
+    suspend fun getStopsByName(name: String): List<Stop>
+
+    @Query("SELECT name FROM stop WHERE name LIKE :query")
+    suspend fun searchStops(query: String): List<String>
+
     @Query("SELECT * FROM path WHERE line = :line")
     suspend fun getPathsOnLine(line: String): List<Path>
 
@@ -41,6 +50,9 @@ interface StbDao {
 
     @Insert(entity = Trip::class, onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertTrip(trip: Trip)
+
+    @Query("SELECT * FROM trip WHERE CAST(startId AS CHAR) LIKE :startId AND CAST(endId AS CHAR) LIKE :endId AND lineId LIKE :lineId AND date LIKE :date")
+    suspend fun searchTrips(startId: String, endId: String, lineId: String, date: String): List<Trip>
 
     @Query("DELETE FROM trip WHERE id = :id")
     suspend fun deleteTrip(id: Int)

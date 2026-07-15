@@ -1,9 +1,11 @@
 package ro.go.stecker.stblogger.ui.screens
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -37,10 +39,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
@@ -52,6 +56,7 @@ import ro.go.stecker.stblogger.data.database.entities.Stop
 import ro.go.stecker.stblogger.data.database.entities.Trip
 import ro.go.stecker.stblogger.data.database.entities.getFormattedDate
 import ro.go.stecker.stblogger.data.mapUrlGen
+import ro.go.stecker.stblogger.getActivity
 import ro.go.stecker.stblogger.ui.StbTopAppBar
 import ro.go.stecker.stblogger.ui.StbViewModel
 import ro.go.stecker.stblogger.ui.UiState
@@ -74,7 +79,13 @@ fun TripsScreen(
 ) {
 
     var fabHeight by remember { mutableStateOf(0.dp) }
+    val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
+
+    BackHandler {
+        if(uiState.showFilteredTrips) viewModel.showFilteredTrips(false)
+        else context.getActivity()?.finish()
+    }
 
     if(deleteTripDialog) {
         AlertDialog(
@@ -107,7 +118,8 @@ fun TripsScreen(
             StbTopAppBar(
                 canNavigateBack = false,
                 canSearch = true,
-                uiState = uiState
+                uiState = uiState,
+                viewModel = viewModel
             )
         },
         floatingActionButton = {
@@ -122,7 +134,6 @@ fun TripsScreen(
                 },
                 onClick = onNewTripClick,
                 modifier = Modifier
-//                    .padding(16.dp)
                     .onGloballyPositioned { coordinates ->
                         fabHeight = with(current) { coordinates.size.height.toDp() }
                     }
@@ -130,40 +141,72 @@ fun TripsScreen(
         },
         modifier = Modifier.fillMaxSize()
     ) { innerPadding ->
-        if (uiState.trips.isNotEmpty()) {
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .padding(horizontal = 20.dp)
-                    .fillMaxSize()
-            ) {
-                items(items = uiState.trips, key = { it.id }) { trip ->
-                    Box(modifier = Modifier.animateItem()) {
-                        TripCard(
-                            trip = trip,
-                            onInfoClick = onInfoClick,
-                            uiState = uiState,
-                            viewModel = viewModel
-                        )
-                    }
-                }
-                item {
-                    Spacer(modifier = Modifier.height(fabHeight + 20.dp))
-                }
-            }
+        if(!uiState.showFilteredTrips) {
+            TripList(
+                trips = uiState.trips,
+                emptyListText = stringResource(R.string.no_trips),
+                onInfoClick = onInfoClick,
+                fabHeight = fabHeight,
+                uiState = uiState,
+                viewModel = viewModel,
+                modifier = Modifier.padding(innerPadding)
+            )
         } else {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.fillMaxSize()
-            ) {
-                Spacer(modifier = Modifier.weight(1f))
-                Text(
-                    text = stringResource(R.string.no_trips),
-                    fontWeight = FontWeight.Bold
-                )
-                Spacer(modifier = Modifier.weight(1f))
+            TripList(
+                trips = uiState.filteredTrips,
+                emptyListText = stringResource(R.string.no_trips_found),
+                onInfoClick = onInfoClick,
+                fabHeight = fabHeight,
+                uiState = uiState,
+                viewModel = viewModel,
+                modifier = Modifier.padding(innerPadding)
+            )
+        }
+    }
+}
+
+@Composable
+fun TripList(
+    trips: List<Trip>,
+    emptyListText: String,
+    onInfoClick: (Int) -> Unit,
+    fabHeight: Dp,
+    uiState: UiState,
+    viewModel: StbViewModel,
+    modifier: Modifier = Modifier
+) {
+    if (trips.isNotEmpty()) {
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            modifier = modifier
+                .padding(horizontal = 20.dp)
+                .fillMaxSize()
+        ) {
+            items(items = trips, key = { it.id }) { trip ->
+                Box(modifier = Modifier.animateItem()) {
+                    TripCard(
+                        trip = trip,
+                        onInfoClick = onInfoClick,
+                        uiState = uiState,
+                        viewModel = viewModel
+                    )
+                }
             }
+            item {
+                Spacer(modifier = Modifier.height(fabHeight + 20.dp))
+            }
+        }
+    } else {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Spacer(modifier = Modifier.weight(1f))
+            Text(
+                text = emptyListText,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.weight(1f))
         }
     }
 }
@@ -204,8 +247,8 @@ fun TripCard(
                     model = url,
                     contentDescription = null
                 )
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
+            FlowRow(
+                verticalArrangement = Arrangement.Center,
                 modifier = Modifier.padding(16.dp)
             ) {
                 Column(

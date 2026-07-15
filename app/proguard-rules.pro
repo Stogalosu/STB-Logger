@@ -21,3 +21,6 @@
 #-renamesourcefileattribute SourceFile
 
 -dontobfuscate
+-keepclassmembers class ro.go.stecker.stblogger.data.database.entities.Path {
+    public <init>();
+}

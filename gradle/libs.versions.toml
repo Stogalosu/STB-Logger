@@ -15,6 +15,7 @@ firebaseBom = "34.15.0"
 firestore = "26.4.0"
 secretsGradlePlugin = "2.0.1"
 secretsPlugin = "2.0.1"
+material3 = "1.4.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -43,6 +44,7 @@ androidx-datastore-preferences = { module = "androidx.datastore:datastore-prefer
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore", version.ref = "firestore" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 secrets-gradle-plugin = { module = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin:secrets-gradle-plugin", version.ref = "secretsGradlePlugin" }
+androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "material3" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

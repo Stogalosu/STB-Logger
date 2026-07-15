@@ -82,7 +82,8 @@ fun NewTripScreen(
                 canNavigateBack = true,
                 onNavigateBack = onNavigateBack,
                 canSearch = false,
-                uiState = uiState
+                uiState = uiState,
+                viewModel = viewModel
             )
         }
     ) { paddingValues ->
