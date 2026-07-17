@@ -4,11 +4,13 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
@@ -46,8 +48,8 @@ fun StbNavHost(
 ) {
 
     val uiState by viewModel.uiState.collectAsState()
-
     var previousConnected by rememberSaveable { mutableStateOf(true) }
+    val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(Unit) {
         snapshotFlow { uiState.isConnected }
@@ -100,6 +102,7 @@ fun StbNavHost(
                 viewModel = viewModel,
                 onInfoClick = { navController.navigate(StbScreen.TripInfoScreen.name + "/" + it) },
                 onNewTripClick = { navController.navigate(StbScreen.NewTripScreen.name) },
+                snackbarHostState = snackbarHostState,
                 uiState = uiState
             )
         }

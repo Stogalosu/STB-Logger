@@ -30,6 +30,9 @@ interface StbDao {
     @Query("SELECT * FROM line")
     suspend fun getLines(): List<Line>
 
+    @Query("SELECT * FROM line WHERE name LIKE :query")
+    suspend fun searchLines(query: String): List<Line>
+
     @Query("SELECT * FROM stop")
     suspend fun getStops(): List<Stop>
 
@@ -39,8 +42,8 @@ interface StbDao {
     @Query("SELECT * FROM stop WHERE name = :name")
     suspend fun getStopsByName(name: String): List<Stop>
 
-    @Query("SELECT name FROM stop WHERE name LIKE :query")
-    suspend fun searchStops(query: String): List<String>
+    @Query("SELECT * FROM stop WHERE name LIKE :query")
+    suspend fun searchStops(query: String): List<Stop>
 
     @Query("SELECT * FROM path WHERE line = :line")
     suspend fun getPathsOnLine(line: String): List<Path>
@@ -51,8 +54,23 @@ interface StbDao {
     @Insert(entity = Trip::class, onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertTrip(trip: Trip)
 
-    @Query("SELECT * FROM trip WHERE CAST(startId AS CHAR) LIKE :startId AND CAST(endId AS CHAR) LIKE :endId AND lineId LIKE :lineId AND date LIKE :date")
-    suspend fun searchTrips(startId: String, endId: String, lineId: String, date: String): List<Trip>
+    @Query("""
+        SELECT * FROM trip 
+        WHERE (:useStartIds = false OR startId IN (:startIds))
+        AND (:useEndIds = false OR endId IN (:endIds))
+        AND (:useLineIds = false OR lineId IN (:lineIds))
+        AND (:useDates = false OR date IN (:dates))
+    """)
+    suspend fun searchTrips(
+        startIds: List<Int>,
+        useStartIds: Boolean,
+        endIds: List<Int>,
+        useEndIds: Boolean,
+        lineIds: List<String>,
+        useLineIds: Boolean,
+        dates: List<String>,
+        useDates: Boolean
+    ): List<Trip>
 
     @Query("DELETE FROM trip WHERE id = :id")
     suspend fun deleteTrip(id: Int)

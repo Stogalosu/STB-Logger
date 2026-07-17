@@ -41,4 +41,9 @@
     <string name="trip_with">Trip with %1$s</string>
     <string name="intermediary_stops">Intermediary stops:</string>
     <string name="no_trips_found">No trips found!</string>
+    <string name="date">Date</string>
+    <string name="any">Any</string>
+    <string name="no_stop_line_found">No matching stop/line found for your query.</string>
+    <string name="search">Search</string>
+    <string name="filter_is_active">Filter is active</string>
 </resources>

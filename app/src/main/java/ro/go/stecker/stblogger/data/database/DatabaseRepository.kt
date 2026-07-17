@@ -14,19 +14,20 @@ interface DatabaseRepo {
     suspend fun getLineById(id: String): Line?
     suspend fun getLineByName(name: String): Line?
     suspend fun getLines(): List<Line>
+    suspend fun searchLines(query: String): List<Line>
     suspend fun getStops(): List<Stop>
     suspend fun getStopById(id: Int): Stop?
     suspend fun getStopsByName(name: String): List<Stop>
-    suspend fun searchStops(query: String): List<String>
+    suspend fun searchStops(query: String): List<Stop>
     suspend fun getPathsOnLine(line: String): List<Path>
     suspend fun getStopsOnLine(line: String): List<Pair<Stop, Int>>
     fun getTrips(): Flow<List<Trip>>
     suspend fun insertTrip(trip: Trip)
     suspend fun searchTrips(
-        startStopName: String = "%",
-        endStopName: String = "%",
-        lineName: String = "%",
-        date: String = "%"
+        startStopNames: List<String>,
+        endStopNames: List<String>,
+        lineNames: List<String>,
+        dates: List<String>
     ): List<Trip>
     suspend fun deleteTrip(id: Int)
     suspend fun getPaths(): List<Path>
@@ -39,10 +40,11 @@ class DatabaseRepository(private val stbDao: StbDao): DatabaseRepo {
     override suspend fun getLineById(id: String): Line? = stbDao.getLineById(id)
     override suspend fun getLineByName(name: String): Line? = stbDao.getLineByName(name)
     override suspend fun getLines(): List<Line> = stbDao.getLines()
+    override suspend fun searchLines(query: String): List<Line> = stbDao.searchLines("%$query%")
     override suspend fun getStops(): List<Stop> = stbDao.getStops()
     override suspend fun getStopById(id: Int): Stop? = stbDao.getStopById(id)
     override suspend fun getStopsByName(name: String): List<Stop> = stbDao.getStopsByName(name)
-    override suspend fun searchStops(query: String): List<String> {
+    override suspend fun searchStops(query: String): List<Stop> {
         var newQuery = query
         newQuery.replace('ă', 'a')
         newQuery.replace('â', 'a')
@@ -59,7 +61,7 @@ class DatabaseRepository(private val stbDao: StbDao): DatabaseRepo {
             }
         }
         newQuery = words.joinToString(" ") + "%"
-        return stbDao.searchStops(newQuery).distinct()
+        return stbDao.searchStops(newQuery)
     }
     override suspend fun getPathsOnLine(line: String): List<Path> = stbDao.getPathsOnLine(line)
     override suspend fun getStopsOnLine(line: String): List<Pair<Stop, Int>> {
@@ -74,63 +76,40 @@ class DatabaseRepository(private val stbDao: StbDao): DatabaseRepo {
             } else
                 Log.e("stop", "Failed to find stop with id ${paths[i].startId}")
         }
-//        stops = stops.sortedWith(compareBy( { it.second }, { it.first.name })).toMutableList()
         return stops
     }
     override fun getTrips(): Flow<List<Trip>> = stbDao.getTrips()
     override suspend fun insertTrip(trip: Trip) = stbDao.insertTrip(trip)
-    override suspend fun searchTrips(startStopName: String, endStopName: String, lineName: String, date: String): List<Trip> {
-        val trips = mutableListOf<Trip>()
-        val startStops = getStopsByName(startStopName)
-        val endStops = getStopsByName(endStopName)
+    override suspend fun searchTrips(
+        startStopNames: List<String>,
+        endStopNames: List<String>,
+        lineNames: List<String>,
+        dates: List<String>
+    ): List<Trip> {
 
-        var lineId = "%"
-        if(lineName != "%")
-            lineId = getLineByName(lineName)!!.id
-
-        when {
-            startStops.isNotEmpty() && endStops.isNotEmpty() ->
-                for(startStop in startStops)
-                    for(endStop in endStops)
-                        trips.addAll(
-                            stbDao.searchTrips(
-                                startStop.id.toString(),
-                                endStop.id.toString(),
-                                lineId,
-                                date
-                            )
-                        )
-            startStops.isNotEmpty() ->
-                for(startStop in startStops)
-                    trips.addAll(
-                        stbDao.searchTrips(
-                            startStop.id.toString(),
-                            "%",
-                            lineId,
-                            date
-                        )
-                    )
-            endStops.isNotEmpty() ->
-                for(endStop in endStops)
-                    trips.addAll(
-                        stbDao.searchTrips(
-                            "%",
-                            endStop.id.toString(),
-                            lineId,
-                            date
-                        )
-                    )
-            else ->
-                trips.addAll(
-                    stbDao.searchTrips(
-                        "%",
-                        "%",
-                        lineId,
-                        date
-                    )
-                )
+        val startIds = mutableListOf<Int>()
+        startStopNames.forEach { startStopName ->
+            startIds.addAll(getStopsByName(startStopName).map { it.id })
         }
-        return trips
+        val endIds = mutableListOf<Int>()
+        endStopNames.forEach { endStopName ->
+            endIds.addAll(getStopsByName(endStopName).map { it.id })
+        }
+        val lineIds = mutableListOf<String>()
+        lineNames.forEach { lineName ->
+            lineIds.add(getLineByName(lineName)!!.id)
+        }
+
+        return stbDao.searchTrips(
+            startIds,
+            startIds.isNotEmpty(),
+            endIds,
+            endIds.isNotEmpty(),
+            lineIds,
+            lineIds.isNotEmpty(),
+            dates,
+            dates.isNotEmpty()
+        )
     }
     override suspend fun deleteTrip(id: Int) = stbDao.deleteTrip(id)
     override suspend fun getPaths(): List<Path> = stbDao.getPaths()

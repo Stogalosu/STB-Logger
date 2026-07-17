@@ -94,6 +94,8 @@ class StbViewModel(
 
     suspend fun getLines(): List<Line> = databaseRepository.getLines()
 
+    suspend fun searchLines(query: String): List<String> = databaseRepository.searchLines(query).map { it.name }
+
     suspend fun updateLineDatabase() {
         if(_uiState.value.isConnected) {
             val shouldUpdate = updates[1]
@@ -116,7 +118,8 @@ class StbViewModel(
     suspend fun getStops(): List<Stop> = databaseRepository.getStops()
 
     suspend fun getStopsOnLine(line: String): List<Pair<Stop, Int>> = databaseRepository.getStopsOnLine(line)
-    suspend fun searchStops(query: String): List<String> = databaseRepository.searchStops(query)
+    suspend fun searchStops(query: String): List<String> =
+        databaseRepository.searchStops(query).map { it.name }.distinct()
 
     suspend fun updateStopDatabase() {
         if(_uiState.value.isConnected) {
@@ -151,19 +154,24 @@ class StbViewModel(
     suspend fun insertTrip(trip: Trip) = databaseRepository.insertTrip(trip)
 
     suspend fun searchTrips(
-        startStopName: String = "%",
-        endStopName: String = "%",
-        lineName: String = "%",
-        date: String = "%"
-    ) = databaseRepository.searchTrips(startStopName, endStopName, lineName, date)
+        startStopNames: List<String>,
+        endStopNames: List<String>,
+        lineNames: List<String>,
+        dates: List<String>
+    ) = databaseRepository.searchTrips(startStopNames, endStopNames, lineNames, dates)
 
     fun showFilteredTrips(active: Boolean, filteredTrips: List<Trip> = listOf()) {
         if(filteredTrips.isNotEmpty())
             _uiState.update { it.copy(showFilteredTrips = active, filteredTrips = filteredTrips) }
         else
-            _uiState.update { it.copy(showFilteredTrips = active) }
+            _uiState.update { it.copy(showFilteredTrips = active, filteredTrips = emptyList()) }
     }
 
-    suspend fun deleteTrip(id: Int) = databaseRepository.deleteTrip(id)
+    suspend fun deleteTrip(id: Int) {
+        val filteredTrips = _uiState.value.filteredTrips.toMutableList()
+        filteredTrips.removeIf { it.id == id }
+        _uiState.update { it.copy(filteredTrips = filteredTrips.toList()) }
+        databaseRepository.deleteTrip(id)
+    }
 
 }
