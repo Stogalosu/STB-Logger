@@ -57,6 +57,7 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import ro.go.stecker.stblogger.R
+import ro.go.stecker.stblogger.ui.dialogs.StbDatePickerDialog
 import ro.go.stecker.stblogger.ui.screens.discardRed
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -225,7 +226,7 @@ fun StbSearchBar(
     val textFieldState = rememberTextFieldState()
     val coroutineScope = rememberCoroutineScope()
 
-    var searchTrips by remember { mutableStateOf(false) }
+    var searchTrips by remember { mutableStateOf(true) }
     var suggestions by remember { mutableStateOf(listOf<String>()) }
     var selectedChip by remember { mutableStateOf(SelectedChip.StartStop) }
 
@@ -334,6 +335,14 @@ fun StbSearchBar(
             )
         }
 
+    var showDatePickerDialog by remember { mutableStateOf(false) }
+
+    if(showDatePickerDialog)
+        StbDatePickerDialog(
+            onDismissRequest = { showDatePickerDialog = false },
+            onDateSelected = { dates.add(it) }
+        )
+
     SearchBar(
         state = searchBarState,
         inputField = inputField,
@@ -409,7 +418,7 @@ fun StbSearchBar(
                 }
                 Row {
                     AssistChip(
-                        onClick = { },
+                        onClick = { showDatePickerDialog = true },
                         label = { Text(text = stringResource(R.string.date)) },
                         leadingIcon = {
                             Icon(
