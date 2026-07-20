@@ -69,7 +69,8 @@ fun MainScreenNavHost(
 
         composable(route = StbTab.Lines.name) {
             LinesScreen(
-                innerPadding = innerPadding
+                innerPadding = innerPadding,
+                viewModel = viewModel
             )
         }
     }

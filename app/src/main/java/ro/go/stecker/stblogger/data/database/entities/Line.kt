@@ -12,10 +12,11 @@ enum class LineType(
     val color: Color = Color(0, 0, 0)
 ) {
     Undefined,
-    Tram(icon = R.drawable.tram, color = Color(218, 11, 53)),
-    Trolleybus(icon = R.drawable.trolleybus, color = Color(87, 201, 90)),
-    Bus(icon = R.drawable.bus, color = Color(10, 92, 255)),
-    Subway
+    Tram(icon = R.drawable.tram, color = Color(/*218, 11, 53*/ 190, 22, 34)),
+    Trolleybus(icon = R.drawable.trolleybus, color = Color(/*87, 201, 90*/ 0, 141, 54)),
+    Bus(icon = R.drawable.bus, color = Color(/*10, 92, 255*/ 29, 113, 184)),
+    NightBus(icon = R.drawable.bus, color = Color(45, 46, 131)),
+    Subway(icon = R.drawable.subway_24px)
 }
 
 @Entity
@@ -33,7 +34,8 @@ fun lineType(name: String): LineType {
         else if (nameToInt < 100) LineType.Trolleybus
         else LineType.Bus
     } else {
-        if(name.endsWith('B') || name.startsWith('N')) LineType.Bus
+        if(name.endsWith('B')) LineType.Bus
+        else if(name.startsWith('N')) LineType.NightBus
         else if(name.startsWith('M')) LineType.Subway
         else LineType.Undefined
     }

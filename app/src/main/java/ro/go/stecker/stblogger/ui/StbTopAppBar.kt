@@ -58,6 +58,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import ro.go.stecker.stblogger.R
 import ro.go.stecker.stblogger.ui.dialogs.StbDatePickerDialog
+import ro.go.stecker.stblogger.ui.navigation.StbTab
 import ro.go.stecker.stblogger.ui.screens.discardRed
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -105,17 +106,18 @@ fun StbTopAppBar(
                 )
 
                 if (canSearch) {
-                    Box(
-                        modifier = Modifier
-                            .animateContentSize()
-                            .weight(1f)
-                    ) {
-                        StbSearchBar(
-                            onSearchFail = onSearchFail,
-                            uiState = uiState,
-                            viewModel = viewModel
-                        )
-                    }
+                    if(uiState.tab == StbTab.Trips)
+                        Box(
+                            modifier = Modifier
+                                .animateContentSize()
+                                .weight(1f)
+                        ) {
+                            StbSearchBar(
+                                onSearchFail = onSearchFail,
+                                uiState = uiState,
+                                viewModel = viewModel
+                            )
+                        }
                 } else {
                     Spacer(modifier = Modifier.weight(1f))
                     Text(
@@ -153,12 +155,13 @@ fun StbTopAppBar(
             }
 
             if (canSearch)
-                StbSearchBar(
-                    onSearchFail = onSearchFail,
-                    uiState = uiState,
-                    viewModel = viewModel,
-                    modifier = Modifier.align(Alignment.Center)
-                )
+                if(uiState.tab == StbTab.Trips)
+                    StbSearchBar(
+                        onSearchFail = onSearchFail,
+                        uiState = uiState,
+                        viewModel = viewModel,
+                        modifier = Modifier.align(Alignment.Center)
+                    )
 
             if(!uiState.isConnected) {
                 ElevatedCard(
