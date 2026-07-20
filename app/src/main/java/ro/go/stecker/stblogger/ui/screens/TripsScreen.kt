@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,14 +21,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -40,9 +36,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -59,7 +53,6 @@ import ro.go.stecker.stblogger.data.database.entities.Trip
 import ro.go.stecker.stblogger.data.database.entities.getFormattedDate
 import ro.go.stecker.stblogger.data.mapUrlGen
 import ro.go.stecker.stblogger.getActivity
-import ro.go.stecker.stblogger.ui.StbTopAppBar
 import ro.go.stecker.stblogger.ui.StbViewModel
 import ro.go.stecker.stblogger.ui.UiState
 import ro.go.stecker.stblogger.ui.vectors.ArrowLongDown
@@ -71,21 +64,17 @@ var deleteTripDialog by mutableStateOf(false)
 var tripToDelete by mutableStateOf(Trip())
 var tripToDeleteLine by mutableStateOf(Line())
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TripsScreen(
     onInfoClick: (Int) -> Unit,
-    onNewTripClick: () -> Unit,
-    snackbarHostState: SnackbarHostState,
+    fabHeight: Dp,
+    innerPadding: PaddingValues,
     viewModel: StbViewModel,
     uiState: UiState
 ) {
 
-    var fabHeight by remember { mutableStateOf(0.dp) }
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
-
-    val failedSearchText = stringResource(R.string.no_stop_line_found)
 
     BackHandler {
         if(uiState.showFilteredTrips) viewModel.showFilteredTrips(false)
@@ -118,61 +107,26 @@ fun TripsScreen(
         )
     }
 
-    Scaffold(
-        topBar = {
-            StbTopAppBar(
-                canNavigateBack = false,
-                canSearch = true,
-                onSearchFail = {
-                    coroutineScope.launch {
-                        snackbarHostState.showSnackbar(failedSearchText)
-                    }
-                },
-                uiState = uiState,
-                viewModel = viewModel
-            )
-        },
-        floatingActionButton = {
-            val current = LocalDensity.current
-            ExtendedFloatingActionButton(
-                text = { Text(stringResource(R.string.new_trip)) },
-                icon = {
-                    Icon(
-                        painter = painterResource(R.drawable.add_24px),
-                        contentDescription = stringResource(R.string.new_trip)
-                    )
-                },
-                onClick = onNewTripClick,
-                modifier = Modifier
-                    .onGloballyPositioned { coordinates ->
-                        fabHeight = with(current) { coordinates.size.height.toDp() }
-                    }
-            )
-        },
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
-        modifier = Modifier.fillMaxSize()
-    ) { innerPadding ->
-        if(!uiState.showFilteredTrips) {
-            TripList(
-                trips = uiState.trips,
-                emptyListText = stringResource(R.string.no_trips),
-                onInfoClick = onInfoClick,
-                fabHeight = fabHeight,
-                uiState = uiState,
-                viewModel = viewModel,
-                modifier = Modifier.padding(innerPadding)
-            )
-        } else {
-            TripList(
-                trips = uiState.filteredTrips,
-                emptyListText = stringResource(R.string.no_trips_found),
-                onInfoClick = onInfoClick,
-                fabHeight = fabHeight,
-                uiState = uiState,
-                viewModel = viewModel,
-                modifier = Modifier.padding(innerPadding)
-            )
-        }
+    if(!uiState.showFilteredTrips) {
+        TripList(
+            trips = uiState.trips,
+            emptyListText = stringResource(R.string.no_trips),
+            onInfoClick = onInfoClick,
+            fabHeight = fabHeight,
+            uiState = uiState,
+            viewModel = viewModel,
+            modifier = Modifier.padding(innerPadding)
+        )
+    } else {
+        TripList(
+            trips = uiState.filteredTrips,
+            emptyListText = stringResource(R.string.no_trips_found),
+            onInfoClick = onInfoClick,
+            fabHeight = fabHeight,
+            uiState = uiState,
+            viewModel = viewModel,
+            modifier = Modifier.padding(innerPadding)
+        )
     }
 }
 

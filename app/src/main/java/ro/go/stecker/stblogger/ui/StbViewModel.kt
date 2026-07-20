@@ -19,6 +19,7 @@ import ro.go.stecker.stblogger.data.firebase.functions.FunctionsRepository
 import ro.go.stecker.stblogger.data.database.entities.lineType
 import ro.go.stecker.stblogger.data.datastore.DataStoreRepository
 import ro.go.stecker.stblogger.network.NetworkConnectivityObserver
+import ro.go.stecker.stblogger.ui.navigation.StbTab
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -86,6 +87,10 @@ class StbViewModel(
         dataStoreRepository.setUpdateTimestamp("lines")
         dataStoreRepository.setUpdateTimestamp("stops")
         _uiState.update { it.copy(databaseUpdateStatus = UpdateStatus.Updated) }
+    }
+
+    fun changeTab(tab: StbTab) {
+        _uiState.update { it.copy(tab = tab) }
     }
 
     suspend fun getLineById(id: String) : Line {

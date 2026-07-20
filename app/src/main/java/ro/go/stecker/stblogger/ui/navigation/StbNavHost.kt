@@ -28,12 +28,12 @@ import ro.go.stecker.stblogger.ui.StbViewModel
 import ro.go.stecker.stblogger.ui.UpdateStatus
 import ro.go.stecker.stblogger.ui.dialogs.NoInternetDialog
 import ro.go.stecker.stblogger.ui.dialogs.UpdateDatabaseDialog
+import ro.go.stecker.stblogger.ui.screens.MainScreen
 import ro.go.stecker.stblogger.ui.screens.NewTripScreen
 import ro.go.stecker.stblogger.ui.screens.TripInfoScreen
-import ro.go.stecker.stblogger.ui.screens.TripsScreen
 
 enum class StbScreen {
-    TripsScreen,
+    MainScreen,
     TripInfoScreen,
     NewTripScreen,
     UpdateDatabasesDialog,
@@ -72,7 +72,7 @@ fun StbNavHost(
 
     NavHost(
         navController = navController,
-        startDestination = StbScreen.TripsScreen.name,
+        startDestination = StbScreen.MainScreen.name,
         enterTransition = { slideInVertically(initialOffsetY = { it / 2 }) },
         exitTransition = {
             slideOutVertically(
@@ -95,15 +95,13 @@ fun StbNavHost(
             )
         }
     ) {
-        composable(
-            route = StbScreen.TripsScreen.name
-        ) {
-            TripsScreen(
-                viewModel = viewModel,
+        composable(route = StbScreen.MainScreen.name) {
+            MainScreen(
                 onInfoClick = { navController.navigate(StbScreen.TripInfoScreen.name + "/" + it) },
                 onNewTripClick = { navController.navigate(StbScreen.NewTripScreen.name) },
                 snackbarHostState = snackbarHostState,
-                uiState = uiState
+                uiState = uiState,
+                viewModel = viewModel
             )
         }
 

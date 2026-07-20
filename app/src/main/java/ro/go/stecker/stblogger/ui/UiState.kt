@@ -1,6 +1,7 @@
 package ro.go.stecker.stblogger.ui
 
 import ro.go.stecker.stblogger.data.database.entities.Trip
+import ro.go.stecker.stblogger.ui.navigation.StbTab
 
 enum class UpdateStatus {
     NotUpdated,
@@ -9,6 +10,7 @@ enum class UpdateStatus {
 }
 
 data class UiState(
+    val tab: StbTab = StbTab.Trips,
     val trips: List<Trip> = emptyList(),
     val filteredTrips: List<Trip> = emptyList(),
     val isConnected: Boolean = true,
