@@ -101,7 +101,7 @@ fun StbNavHost(
             MainScreen(
                 onInfoClick = { navController.navigate(StbScreen.TripInfoScreen.name + "/" + it) },
                 onNewTripClick = { navController.navigate(StbScreen.NewTripScreen.name) },
-                onLineClick = { navController.navigate(StbScreen.LineMapScreen.name) },
+                onLineClick = { navController.navigate(StbScreen.LineMapScreen.name + "/" + it) },
                 snackbarHostState = snackbarHostState,
                 uiState = uiState,
                 viewModel = viewModel
@@ -130,8 +130,14 @@ fun StbNavHost(
             )
         }
 
-        composable(route = StbScreen.LineMapScreen.name) {
+        composable(
+            route = StbScreen.LineMapScreen.name + "/{lineName}",
+            arguments = listOf(navArgument("lineName") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val lineName = backStackEntry.arguments?.getString("lineName") ?: ""
+
             LineMapScreen(
+                lineName = lineName,
                 onNavigateBack = { navController.popBackStack() },
                 snackbarHostState = snackbarHostState,
                 uiState = uiState,

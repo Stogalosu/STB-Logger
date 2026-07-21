@@ -32,7 +32,7 @@ import ro.go.stecker.stblogger.ui.navigation.StbNavBar
 fun MainScreen(
     onInfoClick: (Int) -> Unit,
     onNewTripClick: () -> Unit,
-    onLineClick: () -> Unit,
+    onLineClick: (String) -> Unit,
     snackbarHostState: SnackbarHostState,
     uiState: UiState,
     viewModel: StbViewModel,

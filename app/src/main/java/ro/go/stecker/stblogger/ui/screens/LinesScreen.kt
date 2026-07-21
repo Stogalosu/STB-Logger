@@ -42,7 +42,7 @@ import ro.go.stecker.stblogger.ui.navigation.StbTab
 
 @Composable
 fun LinesScreen(
-    onLineClick: () -> Unit,
+    onLineClick: (String) -> Unit,
     innerPadding: PaddingValues,
     uiState: UiState,
     viewModel: StbViewModel
@@ -98,7 +98,7 @@ fun LinesScreen(
 @Composable
 fun LineItem(
     line: Line,
-    onLineClick: () -> Unit,
+    onLineClick: (String) -> Unit,
     viewModel: StbViewModel
 ) {
     var terminusStops by remember { mutableStateOf(Pair(Stop(), Stop())) }
@@ -113,7 +113,7 @@ fun LineItem(
         modifier = Modifier
             .fillMaxWidth()
             .padding(6.dp)
-            .clickable(onClick = onLineClick)
+            .clickable(onClick = { onLineClick(line.name) })
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,

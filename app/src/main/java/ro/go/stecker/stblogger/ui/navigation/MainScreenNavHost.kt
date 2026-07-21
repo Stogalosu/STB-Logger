@@ -23,7 +23,7 @@ enum class StbTab(name: String) {
 fun MainScreenNavHost(
     navController: NavHostController,
     onInfoClick: (Int) -> Unit,
-    onLineClick: () -> Unit,
+    onLineClick: (String) -> Unit,
     fabHeight: Dp,
     innerPadding: PaddingValues,
     snackbarHostState: SnackbarHostState,
