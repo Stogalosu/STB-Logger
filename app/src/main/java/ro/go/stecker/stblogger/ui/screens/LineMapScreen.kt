@@ -7,6 +7,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.mapbox.bindgen.Value
 import com.mapbox.geojson.Point
@@ -14,6 +15,7 @@ import com.mapbox.maps.extension.compose.MapEffect
 import com.mapbox.maps.extension.compose.MapboxMap
 import com.mapbox.maps.extension.compose.animation.viewport.rememberMapViewportState
 import com.mapbox.maps.extension.compose.style.MapStyle
+import ro.go.stecker.stblogger.R
 import ro.go.stecker.stblogger.ui.StbTopAppBar
 import ro.go.stecker.stblogger.ui.StbViewModel
 import ro.go.stecker.stblogger.ui.UiState
@@ -30,6 +32,7 @@ fun LineMapScreen(
     Scaffold(
         topBar = {
             StbTopAppBar(
+                title = stringResource(R.string.line_x, lineName),
                 canNavigateBack = true,
                 onNavigateBack = onNavigateBack,
                 canSearch = false,

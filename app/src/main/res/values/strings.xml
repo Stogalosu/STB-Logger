@@ -49,4 +49,5 @@
     <string name="filter_is_active">Filter is active</string>
     <string name="confirm">Confirm</string>
     <string name="no_lines_found">No lines found!</string>
+    <string name="line_x">Line %1$s</string>
 </resources>
