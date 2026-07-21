@@ -176,6 +176,17 @@ fun StbTopAppBar(
                         viewModel = viewModel,
                         modifier = Modifier.align(Alignment.Center)
                     )
+            } else if(title.isNotEmpty()) {
+                ElevatedCard(
+                    shape = RoundedCornerShape(16.dp),
+                    modifier = Modifier.align(Alignment.Center)
+                ) {
+                    Text(
+                        text = title,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(16.dp)
+                    )
+                }
             }
 
             if(!uiState.isConnected) {
