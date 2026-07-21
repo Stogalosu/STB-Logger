@@ -1,6 +1,7 @@
 package ro.go.stecker.stblogger.ui.screens
 
 import androidx.compose.foundation.gestures.ScrollableDefaults
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -27,36 +28,65 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import ro.go.stecker.stblogger.R
 import ro.go.stecker.stblogger.data.database.entities.Line
 import ro.go.stecker.stblogger.data.database.entities.Stop
 import ro.go.stecker.stblogger.data.database.entities.getTerminusStops
 import ro.go.stecker.stblogger.ui.StbViewModel
+import ro.go.stecker.stblogger.ui.UiState
+import ro.go.stecker.stblogger.ui.navigation.StbTab
 
 @Composable
 fun LinesScreen(
     innerPadding: PaddingValues,
+    uiState: UiState,
     viewModel: StbViewModel
 ) {
     var lines by remember { mutableStateOf(listOf<Line>()) }
 
     LaunchedEffect(Unit) {
+        viewModel.changeTab(StbTab.Lines)
         lines = viewModel.getLines()
     }
 
-    LazyVerticalGrid(
-        columns = GridCells.Adaptive(256.dp),
-        flingBehavior = ScrollableDefaults.flingBehavior(),
-        modifier = Modifier
-            .padding(innerPadding)
-            .padding(16.dp)
-            .fillMaxSize()
-    ) {
-        items(lines) { line ->
-            LineItem(
-                line = line,
-                viewModel = viewModel
+    if(!uiState.showFilteredLines || uiState.filteredLines.isNotEmpty()) {
+        LazyVerticalGrid(
+            columns = GridCells.Adaptive(256.dp),
+            flingBehavior = ScrollableDefaults.flingBehavior(),
+            modifier = Modifier
+                .padding(innerPadding)
+                .padding(16.dp)
+                .fillMaxSize()
+        ) {
+            if (!uiState.showFilteredLines)
+                items(lines) { line ->
+                    LineItem(
+                        line = line,
+                        viewModel = viewModel
+                    )
+                }
+            else
+                items(uiState.filteredLines) { line ->
+                    LineItem(
+                        line = line,
+                        viewModel = viewModel
+                    )
+                }
+        }
+    } else {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Spacer(modifier = Modifier.weight(1f))
+            Text(
+                text = stringResource(R.string.no_lines_found),
+                fontWeight = FontWeight.Bold
             )
+            Spacer(modifier = Modifier.weight(1f))
         }
     }
 }
@@ -80,6 +110,7 @@ fun LineItem(
             .padding(6.dp)
     ) {
         Row(
+            verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
         ) {
             Card(

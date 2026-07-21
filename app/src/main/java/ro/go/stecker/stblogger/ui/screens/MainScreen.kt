@@ -75,10 +75,7 @@ fun MainScreen(
         },
         bottomBar = {
             StbNavBar(
-                onScreenChange = {
-                    navController.navigate(it.name)
-                    viewModel.changeTab(it)
-                },
+                onScreenChange = { navController.navigate(it.name) },
                 uiState = uiState
             )
         },

@@ -55,6 +55,7 @@ import ro.go.stecker.stblogger.data.mapUrlGen
 import ro.go.stecker.stblogger.getActivity
 import ro.go.stecker.stblogger.ui.StbViewModel
 import ro.go.stecker.stblogger.ui.UiState
+import ro.go.stecker.stblogger.ui.navigation.StbTab
 import ro.go.stecker.stblogger.ui.vectors.ArrowLongDown
 
 val discardRed = Color(224, 65, 65)
@@ -79,6 +80,10 @@ fun TripsScreen(
     BackHandler {
         if(uiState.showFilteredTrips) viewModel.showFilteredTrips(false)
         else context.getActivity()?.finish()
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.changeTab(StbTab.Trips)
     }
 
     if(deleteTripDialog) {

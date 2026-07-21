@@ -43,7 +43,10 @@ class DatabaseRepository(private val stbDao: StbDao): DatabaseRepo {
         val lines = stbDao.getLines()
         return lines.sortedWith(compareBy ({ it.type.ordinal }, { it.name }))
     }
-    override suspend fun searchLines(query: String): List<Line> = stbDao.searchLines("%$query%")
+    override suspend fun searchLines(query: String): List<Line> {
+        val lines = stbDao.searchLines("%$query%")
+        return lines.sortedWith(compareBy ({ it.type.ordinal }, { it.name }))
+    }
     override suspend fun getStops(): List<Stop> = stbDao.getStops()
     override suspend fun getStopById(id: Int): Stop? = stbDao.getStopById(id)
     override suspend fun getStopsByName(name: String): List<Stop> = stbDao.getStopsByName(name)

@@ -18,6 +18,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.material3.AssistChip
@@ -33,6 +34,7 @@ import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
+import androidx.compose.material3.SearchBarState
 import androidx.compose.material3.SearchBarValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberSearchBarState
@@ -54,6 +56,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import ro.go.stecker.stblogger.R
@@ -106,18 +109,23 @@ fun StbTopAppBar(
                 )
 
                 if (canSearch) {
-                    if(uiState.tab == StbTab.Trips)
-                        Box(
-                            modifier = Modifier
-                                .animateContentSize()
-                                .weight(1f)
-                        ) {
-                            StbSearchBar(
+                    Box(
+                        modifier = Modifier
+                            .animateContentSize()
+                            .weight(1f)
+                    ) {
+                        if (uiState.tab == StbTab.Trips)
+                            TripsSearchBar(
                                 onSearchFail = onSearchFail,
                                 uiState = uiState,
                                 viewModel = viewModel
                             )
-                        }
+                        if (uiState.tab == StbTab.Lines)
+                            LinesSearchBar(
+                                uiState = uiState,
+                                viewModel = viewModel
+                            )
+                    }
                 } else {
                     Spacer(modifier = Modifier.weight(1f))
                     Text(
@@ -154,14 +162,21 @@ fun StbTopAppBar(
                 )
             }
 
-            if (canSearch)
-                if(uiState.tab == StbTab.Trips)
-                    StbSearchBar(
+            if (canSearch) {
+                if (uiState.tab == StbTab.Trips)
+                    TripsSearchBar(
                         onSearchFail = onSearchFail,
                         uiState = uiState,
                         viewModel = viewModel,
                         modifier = Modifier.align(Alignment.Center)
                     )
+                if (uiState.tab == StbTab.Lines)
+                    LinesSearchBar(
+                        uiState = uiState,
+                        viewModel = viewModel,
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+            }
 
             if(!uiState.isConnected) {
                 ElevatedCard(
@@ -219,7 +234,54 @@ fun InputChipRow(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun StbSearchBar(
+private fun SearchLeadingIcon(
+    searchBarState: SearchBarState,
+    coroutineScope: CoroutineScope,
+    uiState: UiState
+){
+    AnimatedVisibility(
+        visible = searchBarState.currentValue == SearchBarValue.Expanded && !searchBarState.isAnimating && uiState.tab == StbTab.Trips,
+        enter = fadeIn(),
+        exit = fadeOut()
+    ) {
+        IconButton(
+            onClick = { coroutineScope.launch { searchBarState.animateToCollapsed() } }
+        ) {
+            Icon(
+                painterResource(R.drawable.rounded_arrow_back_24),
+                contentDescription = stringResource(R.string.back)
+            )
+        }
+    }
+}
+
+@Composable
+private fun SearchTrailingIcon(
+    textFieldState: TextFieldState,
+    uiState: UiState,
+    viewModel: StbViewModel
+) {
+    IconButton(
+        onClick = {
+            when(uiState.tab) {
+                StbTab.Trips ->
+                    viewModel.showFilteredTrips(false)
+                StbTab.Lines ->
+                    viewModel.showFilteredLines(false)
+            }
+            textFieldState.setTextAndPlaceCursorAtEnd("")
+        }
+    ) {
+        Icon(
+            painterResource(R.drawable.close_24px),
+            contentDescription = stringResource(R.string.back)
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TripsSearchBar(
     onSearchFail: (String) -> Unit,
     uiState: UiState,
     viewModel: StbViewModel,
@@ -241,7 +303,7 @@ fun StbSearchBar(
     suspend fun onSearchSuggestions(query: String) {
         when(selectedChip) {
             SelectedChip.Line ->
-                suggestions = viewModel.searchLines(query)
+                suggestions = viewModel.searchLines(query).map { it.name }
             else ->
                 suggestions = viewModel.searchStops(query)
         }
@@ -306,35 +368,8 @@ fun StbSearchBar(
                         else stringResource(R.string.search)
                     Text(text = text, modifier = Modifier.clearAndSetSemantics {})
                 },
-                leadingIcon = {
-                    AnimatedVisibility(
-                        visible = searchBarState.currentValue == SearchBarValue.Expanded && !searchBarState.isAnimating,
-                        enter = fadeIn(),
-                        exit = fadeOut()
-                    ) {
-                        IconButton(
-                            onClick = { coroutineScope.launch { searchBarState.animateToCollapsed() } }
-                        ) {
-                            Icon(
-                                painterResource(R.drawable.rounded_arrow_back_24),
-                                contentDescription = stringResource(R.string.back)
-                            )
-                        }
-                    }
-                },
-                trailingIcon = {
-                    IconButton(
-                        onClick = {
-                            viewModel.showFilteredTrips(false)
-                            textFieldState.setTextAndPlaceCursorAtEnd("")
-                        }
-                    ) {
-                        Icon(
-                            painterResource(R.drawable.close_24px),
-                            contentDescription = stringResource(R.string.back)
-                        )
-                    }
-                },
+                leadingIcon = { SearchLeadingIcon(searchBarState, coroutineScope, uiState) },
+                trailingIcon = { SearchTrailingIcon(textFieldState, uiState, viewModel) },
             )
         }
 
@@ -454,6 +489,57 @@ fun StbSearchBar(
             }
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun LinesSearchBar(
+    uiState: UiState,
+    viewModel: StbViewModel,
+    modifier: Modifier = Modifier
+) {
+    val searchBarState = rememberSearchBarState()
+    val textFieldState = rememberTextFieldState()
+    val coroutineScope = rememberCoroutineScope()
+
+    fun onSearch() {
+        coroutineScope.launch {
+            viewModel.showFilteredLines(
+                true,
+                viewModel.searchLines(textFieldState.text.toString())
+            )
+        }
+    }
+
+    LaunchedEffect(textFieldState.text) {
+        if(textFieldState.text.isNotEmpty()) {
+            delay(300.milliseconds)
+            onSearch()
+        } else
+            viewModel.showFilteredLines(false)
+    }
+
+    val inputField =
+        @Composable {
+            SearchBarDefaults.InputField(
+                textFieldState = textFieldState,
+                searchBarState = searchBarState,
+                onSearch = {
+
+                },
+                placeholder = {
+                    Text(text = stringResource(R.string.search), modifier = Modifier.clearAndSetSemantics {})
+                },
+                leadingIcon = { SearchLeadingIcon(searchBarState, coroutineScope, uiState) },
+                trailingIcon = { SearchTrailingIcon(textFieldState, uiState, viewModel) },
+            )
+        }
+
+    SearchBar(
+        state = searchBarState,
+        inputField = inputField,
+        modifier = modifier
+    )
 }
 
 @Composable

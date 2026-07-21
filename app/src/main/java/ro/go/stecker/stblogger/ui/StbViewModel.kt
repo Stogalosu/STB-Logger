@@ -99,7 +99,14 @@ class StbViewModel(
 
     suspend fun getLines(): List<Line> = databaseRepository.getLines()
 
-    suspend fun searchLines(query: String): List<String> = databaseRepository.searchLines(query).map { it.name }
+    suspend fun searchLines(query: String): List<Line> = databaseRepository.searchLines(query)
+
+    fun showFilteredLines(active: Boolean, filteredLines: List<Line> = listOf()) {
+        if(filteredLines.isNotEmpty())
+            _uiState.update { it.copy(showFilteredLines = active, filteredLines = filteredLines) }
+        else
+            _uiState.update { it.copy(showFilteredLines = active, filteredLines = emptyList()) }
+    }
 
     suspend fun updateLineDatabase() {
         if(_uiState.value.isConnected) {
