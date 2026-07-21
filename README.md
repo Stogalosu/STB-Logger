@@ -1,4 +1,7 @@
 # STB Logger
+## Disclosure for reviewers
+I've submitted this project to Hack Club: The Game on July 6th 2026, after working about 69 hours. That's when I released version 0.1. As of the time of writing, it hasn't been reviewed. Since shipping, I've continued work for Horizons and logged about 13.3 hours, enough to get me out of debt. That's why I'm now also submitting this to Horizons (because today, July 21st, is the deadline) only for those 13.3 hours. Thanks for understanding!
+
 ## What is this?
 An Android app which you can use to log your trips with the Bucharest public transport (STB), as well as visualize them on the map.
 
@@ -18,6 +21,12 @@ Download the apk from the releases page and install it on your Android device. A
 
 ## Usage
 For now, only the trip logging for lines 1-85 is implemented. You can log a new trip by manually selecting the line, the stop you got on at and the one you got off at. Then, you can click the info button to see which stops you passed by and a bigger map of your trip.
+
+## What's changed since the first ship? (for Horizons)
+- I've added functionality to the search bar. Users can now filter trips based on start stop, end stop, line or date. These filters can be used simultaneously in any combination.
+- I've added a screen with a list of the public transport lines. When clicking a line, an interactive map of it is displayed.
+
+You can check out the second demo video for a tour of the new features.
 
 ## Future plans
 The app is nowhere close to being finished. I want to also add a page where you can see the buses' location in real time, using STB's public API. You will also be able to log a trip automatically using GPS location and see the stats for all your trips, as well as for individual ones. I'm thinking of adding mixed trips, that is ones in which you take multiple buses to get to you destination, but I'm not sure how to do that.
