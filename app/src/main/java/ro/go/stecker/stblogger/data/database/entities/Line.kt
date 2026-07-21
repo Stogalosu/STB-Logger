@@ -5,6 +5,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import ro.go.stecker.stblogger.R
+import ro.go.stecker.stblogger.ui.StbViewModel
 
 enum class LineType(
     @param:DrawableRes
@@ -39,4 +40,21 @@ fun lineType(name: String): LineType {
         else if(name.startsWith('M')) LineType.Subway
         else LineType.Undefined
     }
+}
+
+suspend fun Line.getTerminusStops(viewModel: StbViewModel): Pair<Stop, Stop> {
+    val paths = viewModel.getPaths()
+
+    val pathDir0 = paths.find {
+        it.line == this.name &&
+        it.direction == 0
+    } ?: Path()
+    val pathDir1 = paths.find {
+        it.line == this.name &&
+        it.direction == 1
+    } ?: Path()
+    val stopDir0 = viewModel.getStopById(pathDir0.startId)
+    val stopDir1 = viewModel.getStopById(pathDir1.startId)
+
+    return Pair(stopDir0, stopDir1)
 }

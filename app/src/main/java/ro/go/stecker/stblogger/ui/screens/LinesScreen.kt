@@ -3,10 +3,12 @@ package ro.go.stecker.stblogger.ui.screens
 import androidx.compose.foundation.gestures.ScrollableDefaults
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -27,6 +29,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import ro.go.stecker.stblogger.data.database.entities.Line
+import ro.go.stecker.stblogger.data.database.entities.Stop
+import ro.go.stecker.stblogger.data.database.entities.getTerminusStops
 import ro.go.stecker.stblogger.ui.StbViewModel
 
 @Composable
@@ -49,15 +53,25 @@ fun LinesScreen(
             .fillMaxSize()
     ) {
         items(lines) { line ->
-            LineItem(line)
+            LineItem(
+                line = line,
+                viewModel = viewModel
+            )
         }
     }
 }
 
 @Composable
 fun LineItem(
-    line: Line
+    line: Line,
+    viewModel: StbViewModel
 ) {
+    var terminusStops by remember { mutableStateOf(Pair(Stop(), Stop())) }
+
+    LaunchedEffect(Unit) {
+        terminusStops = line.getTerminusStops(viewModel)
+    }
+
     Card(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
         shape = RoundedCornerShape(16.dp),
@@ -84,6 +98,8 @@ fun LineItem(
                     Text(text = line.name)
                 }
             }
+            Spacer(modifier = Modifier.width(32.dp))
+            Text(text = "${terminusStops.first.name} - ${terminusStops.second.name}")
         }
     }
 }
