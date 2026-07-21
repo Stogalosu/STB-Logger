@@ -24,7 +24,7 @@ For now, only the trip logging for lines 1-85 is implemented. You can log a new 
 
 ## What's changed since the first ship? (for Horizons)
 - I've added functionality to the search bar. Users can now filter trips based on start stop, end stop, line or date. These filters can be used simultaneously in any combination.
-- I've added a screen with a list of the public transport lines. When clicking a line, an interactive map of it is displayed.
+- I've added a screen with a list of the public transport lines. When clicking a line, an interactive map of it is displayed. (only tram lines work for now)
 
 You can check out the second demo video for a tour of the new features.
 
