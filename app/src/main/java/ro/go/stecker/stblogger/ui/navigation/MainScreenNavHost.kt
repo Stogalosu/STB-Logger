@@ -23,6 +23,7 @@ enum class StbTab(name: String) {
 fun MainScreenNavHost(
     navController: NavHostController,
     onInfoClick: (Int) -> Unit,
+    onLineClick: () -> Unit,
     fabHeight: Dp,
     innerPadding: PaddingValues,
     snackbarHostState: SnackbarHostState,
@@ -69,6 +70,7 @@ fun MainScreenNavHost(
 
         composable(route = StbTab.Lines.name) {
             LinesScreen(
+                onLineClick = onLineClick,
                 innerPadding = innerPadding,
                 uiState = uiState,
                 viewModel = viewModel

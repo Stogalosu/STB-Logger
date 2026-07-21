@@ -1,5 +1,6 @@
 [versions]
 agp = "9.0.1"
+mapboxAndroid = "11.26.0"
 glide = "1.0.0-beta09"
 kotlin = "2.4.0"
 coreKtx = "1.18.0"
@@ -13,11 +14,13 @@ ksp = "2.3.6"
 googleServices = "4.5.0"
 firebaseBom = "34.15.0"
 firestore = "26.4.0"
+maoboxMapsComposeNdk27 = "11.26.0"
 secretsGradlePlugin = "2.0.1"
 secretsPlugin = "2.0.1"
 material3 = "1.4.0"
 
 [libraries]
+mapbox-maps-android = { module = "com.mapbox.maps:android", version.ref = "mapboxAndroid" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 firebase-functions = { module = "com.google.firebase:firebase-functions" }
 glide = { module = "com.github.bumptech.glide:compose", version.ref = "glide" }
@@ -43,6 +46,7 @@ androidx-animation = { group = "androidx.compose.animation", name = "animation",
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version = "1.2.1" }
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore", version.ref = "firestore" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
+mapbox-maps-compose-ndk27 = { module = "com.mapbox.extension:maps-compose-ndk27", version.ref = "maoboxMapsComposeNdk27" }
 secrets-gradle-plugin = { module = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin:secrets-gradle-plugin", version.ref = "secretsGradlePlugin" }
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "material3" }
 

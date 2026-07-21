@@ -28,6 +28,7 @@ import ro.go.stecker.stblogger.ui.StbViewModel
 import ro.go.stecker.stblogger.ui.UpdateStatus
 import ro.go.stecker.stblogger.ui.dialogs.NoInternetDialog
 import ro.go.stecker.stblogger.ui.dialogs.UpdateDatabaseDialog
+import ro.go.stecker.stblogger.ui.screens.LineMapScreen
 import ro.go.stecker.stblogger.ui.screens.MainScreen
 import ro.go.stecker.stblogger.ui.screens.NewTripScreen
 import ro.go.stecker.stblogger.ui.screens.TripInfoScreen
@@ -36,6 +37,7 @@ enum class StbScreen {
     MainScreen,
     TripInfoScreen,
     NewTripScreen,
+    LineMapScreen,
     UpdateDatabasesDialog,
     NoInternetDialog
 }
@@ -99,6 +101,7 @@ fun StbNavHost(
             MainScreen(
                 onInfoClick = { navController.navigate(StbScreen.TripInfoScreen.name + "/" + it) },
                 onNewTripClick = { navController.navigate(StbScreen.NewTripScreen.name) },
+                onLineClick = { navController.navigate(StbScreen.LineMapScreen.name) },
                 snackbarHostState = snackbarHostState,
                 uiState = uiState,
                 viewModel = viewModel
@@ -122,6 +125,15 @@ fun StbNavHost(
         composable(route = StbScreen.NewTripScreen.name) {
             NewTripScreen(
                 onNavigateBack = { navController.popBackStack() },
+                uiState = uiState,
+                viewModel = viewModel
+            )
+        }
+
+        composable(route = StbScreen.LineMapScreen.name) {
+            LineMapScreen(
+                onNavigateBack = { navController.popBackStack() },
+                snackbarHostState = snackbarHostState,
                 uiState = uiState,
                 viewModel = viewModel
             )

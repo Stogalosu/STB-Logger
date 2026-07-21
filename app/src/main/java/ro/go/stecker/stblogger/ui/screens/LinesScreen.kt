@@ -1,5 +1,6 @@
 package ro.go.stecker.stblogger.ui.screens
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.ScrollableDefaults
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -41,6 +42,7 @@ import ro.go.stecker.stblogger.ui.navigation.StbTab
 
 @Composable
 fun LinesScreen(
+    onLineClick: () -> Unit,
     innerPadding: PaddingValues,
     uiState: UiState,
     viewModel: StbViewModel
@@ -65,6 +67,7 @@ fun LinesScreen(
                 items(lines) { line ->
                     LineItem(
                         line = line,
+                        onLineClick = onLineClick,
                         viewModel = viewModel
                     )
                 }
@@ -72,6 +75,7 @@ fun LinesScreen(
                 items(uiState.filteredLines) { line ->
                     LineItem(
                         line = line,
+                        onLineClick = onLineClick,
                         viewModel = viewModel
                     )
                 }
@@ -94,6 +98,7 @@ fun LinesScreen(
 @Composable
 fun LineItem(
     line: Line,
+    onLineClick: () -> Unit,
     viewModel: StbViewModel
 ) {
     var terminusStops by remember { mutableStateOf(Pair(Stop(), Stop())) }
@@ -108,6 +113,7 @@ fun LineItem(
         modifier = Modifier
             .fillMaxWidth()
             .padding(6.dp)
+            .clickable(onClick = onLineClick)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,

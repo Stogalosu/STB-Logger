@@ -69,6 +69,10 @@ dependencies {
     //Glide
     implementation(libs.glide)
 
+    //Mapbox SDK
+    implementation(libs.mapbox.maps.compose.ndk27)
+    //Core Mapbox Maps SDK
+    implementation(libs.mapbox.maps.android)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

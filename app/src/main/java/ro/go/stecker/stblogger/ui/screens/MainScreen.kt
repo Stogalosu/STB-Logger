@@ -32,6 +32,7 @@ import ro.go.stecker.stblogger.ui.navigation.StbNavBar
 fun MainScreen(
     onInfoClick: (Int) -> Unit,
     onNewTripClick: () -> Unit,
+    onLineClick: () -> Unit,
     snackbarHostState: SnackbarHostState,
     uiState: UiState,
     viewModel: StbViewModel,
@@ -85,6 +86,7 @@ fun MainScreen(
         MainScreenNavHost(
             navController = navController,
             onInfoClick = onInfoClick,
+            onLineClick = onLineClick,
             fabHeight = fabHeight,
             innerPadding = innerPadding,
             snackbarHostState = snackbarHostState,
