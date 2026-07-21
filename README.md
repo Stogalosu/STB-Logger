@@ -36,3 +36,6 @@ AI helped me here and there, with debugging and, sometimes, ideas, but I don't h
 
 ## Demo video
 https://github.com/user-attachments/assets/aa199a6c-2ba9-47db-8946-18c2d6202536
+
+## New demo video (for Horizons)
+https://github.com/user-attachments/assets/27bfb471-990a-4d25-b77e-dee7e2c0dbec
